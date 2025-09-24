@@ -1,544 +1,317 @@
--- phpMyAdmin SQL Dump
--- version 5.2.1
--- https://www.phpmyadmin.net/
---
--- Host: 127.0.0.1
--- Generation Time: Sep 23, 2025 at 07:51 PM
--- Server version: 10.4.32-MariaDB
--- PHP Version: 8.2.12
-
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
 SET time_zone = "+00:00";
 
+SET FOREIGN_KEY_CHECKS=0;
 
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
-
---
--- Database: `qlbanhoa`
---
-
--- --------------------------------------------------------
-
---
--- Table structure for table `chitiethoadon`
---
-
-CREATE TABLE `chitiethoadon` (
-  `idHoaDon` int(11) NOT NULL,
-  `idSanPham` int(11) NOT NULL,
-  `SoLuong` int(11) NOT NULL,
-  `DonGia` decimal(10,2) NOT NULL,
-  `ThanhTien` decimal(10,2) NOT NULL
+-- ---------------------------
+-- Table: feature (chucnang)
+-- ---------------------------
+DROP TABLE IF EXISTS `feature`;
+CREATE TABLE `feature` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `code` varchar(5) DEFAULT NULL,
+  `name` varchar(255) NOT NULL,
+  `screen_name` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_feature_code` (`code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- --------------------------------------------------------
-
---
--- Table structure for table `chitietphieunhap`
---
-
-CREATE TABLE `chitietphieunhap` (
-  `idPhieuNhap` int(11) NOT NULL,
-  `idSanPham` int(11) NOT NULL,
-  `SoLuong` int(11) NOT NULL,
-  `DonGia` decimal(10,2) NOT NULL,
-  `ThanhTien` decimal(10,2) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `chucnang`
---
-
-CREATE TABLE `chucnang` (
-  `id` int(11) NOT NULL,
-  `MaChucNang` varchar(5) DEFAULT NULL,
-  `TenChucNang` varchar(255) NOT NULL,
-  `TenManHinh` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Triggers `chucnang`
---
 DELIMITER $$
-CREATE TRIGGER `trg_cn_ai` AFTER INSERT ON `chucnang` FOR EACH ROW BEGIN
-  UPDATE CHUCNANG
-    SET MaChucNang = CONCAT('CN', LPAD(NEW.id, 3, '0'))
+CREATE TRIGGER trg_feature_ai AFTER INSERT ON feature
+FOR EACH ROW BEGIN
+  UPDATE feature
+    SET code = CONCAT('CN', LPAD(NEW.id, 3, '0'))
   WHERE id = NEW.id;
-END
-$$
+END$$
 DELIMITER ;
 
--- --------------------------------------------------------
-
---
--- Table structure for table `hoadon`
---
-
-CREATE TABLE `hoadon` (
-  `id` int(11) NOT NULL,
-  `MaHoaDon` varchar(6) DEFAULT NULL,
-  `NgayLap` datetime NOT NULL,
-  `idKhachHang` int(11) DEFAULT NULL,
-  `idNguoiDung` int(11) DEFAULT NULL,
-  `TongTien` decimal(10,2) NOT NULL
+-- ---------------------------
+-- Table: customer (khachhang)
+-- ---------------------------
+DROP TABLE IF EXISTS `customer`;
+CREATE TABLE `customer` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `code` varchar(6) DEFAULT NULL,
+  `name` varchar(255) NOT NULL,
+  `address` text DEFAULT NULL,
+  `phone` varchar(20) DEFAULT NULL,
+  `email` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_customer_code` (`code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Triggers `hoadon`
---
 DELIMITER $$
-CREATE TRIGGER `trg_hd_ai` AFTER INSERT ON `hoadon` FOR EACH ROW BEGIN
-  UPDATE HOADON
-    SET MaHoaDon = CONCAT('HD', LPAD(NEW.id, 4, '0'))
+CREATE TRIGGER trg_customer_ai AFTER INSERT ON customer
+FOR EACH ROW BEGIN
+  UPDATE customer
+    SET code = CONCAT('KH', LPAD(NEW.id, 4, '0'))
   WHERE id = NEW.id;
-END
-$$
+END$$
 DELIMITER ;
 
--- --------------------------------------------------------
-
---
--- Table structure for table `khachhang`
---
-
-CREATE TABLE `khachhang` (
-  `id` int(11) NOT NULL,
-  `MaKhachHang` varchar(6) DEFAULT NULL,
-  `TenKhachHang` varchar(255) NOT NULL,
-  `DiaChi` text DEFAULT NULL,
-  `SoDienThoai` varchar(20) DEFAULT NULL,
-  `Email` varchar(255) DEFAULT NULL
+-- ---------------------------
+-- Table: supplier (nhacungcap)
+-- ---------------------------
+DROP TABLE IF EXISTS `supplier`;
+CREATE TABLE `supplier` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `code` varchar(6) DEFAULT NULL,
+  `name` varchar(255) NOT NULL,
+  `address` text DEFAULT NULL,
+  `phone` varchar(20) DEFAULT NULL,
+  `email` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_supplier_code` (`code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Triggers `khachhang`
---
 DELIMITER $$
-CREATE TRIGGER `trg_kh_ai` AFTER INSERT ON `khachhang` FOR EACH ROW BEGIN
-  UPDATE KHACHHANG
-    SET MaKhachHang = CONCAT('KH', LPAD(NEW.id, 4, '0'))
+CREATE TRIGGER trg_supplier_ai AFTER INSERT ON supplier
+FOR EACH ROW BEGIN
+  UPDATE supplier
+    SET code = CONCAT('NCC', LPAD(NEW.id, 3, '0'))
   WHERE id = NEW.id;
-END
-$$
+END$$
 DELIMITER ;
 
--- --------------------------------------------------------
-
---
--- Table structure for table `loaisanpham`
---
-
-CREATE TABLE `loaisanpham` (
-  `id` int(11) NOT NULL,
-  `MaLoaiSanPham` varchar(6) DEFAULT NULL,
-  `TenLoaiSanPham` varchar(255) NOT NULL
+-- ---------------------------
+-- Table: product_category (loaisanpham)
+-- ---------------------------
+DROP TABLE IF EXISTS `product_category`;
+CREATE TABLE `product_category` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `code` varchar(6) DEFAULT NULL,
+  `name` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_product_category_code` (`code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Triggers `loaisanpham`
---
 DELIMITER $$
-CREATE TRIGGER `trg_lsp_ai` AFTER INSERT ON `loaisanpham` FOR EACH ROW BEGIN
-  UPDATE LOAISANPHAM
-    SET MaLoaiSanPham = CONCAT('LSP', LPAD(NEW.id, 3, '0'))
+CREATE TRIGGER trg_product_category_ai AFTER INSERT ON product_category
+FOR EACH ROW BEGIN
+  UPDATE product_category
+    SET code = CONCAT('LSP', LPAD(NEW.id, 3, '0'))
   WHERE id = NEW.id;
-END
-$$
+END$$
 DELIMITER ;
 
--- --------------------------------------------------------
-
---
--- Table structure for table `nguoidung`
---
-
-CREATE TABLE `nguoidung` (
-  `id` int(11) NOT NULL,
-  `MaNguoiDung` varchar(6) DEFAULT NULL,
-  `TenNguoiDung` varchar(255) NOT NULL,
-  `TenDangNhap` varchar(100) NOT NULL,
-  `MatKhau` varchar(255) NOT NULL,
-  `idNhomNguoiDung` int(11) NOT NULL,
-  `CaLamViec` varchar(50) DEFAULT NULL,
-  `MaNhanVien` varchar(6) DEFAULT NULL,
-  `LuongCoDinh` decimal(10,2) DEFAULT NULL,
-  `NgayBatDauLam` datetime DEFAULT NULL,
-  `TrangThai` varchar(50) DEFAULT 'Đang làm'
+-- ---------------------------
+-- Table: product (sanpham)
+-- ---------------------------
+DROP TABLE IF EXISTS `product`;
+CREATE TABLE `product` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `code` varchar(5) DEFAULT NULL,
+  `name` varchar(255) NOT NULL,
+  `description` text DEFAULT NULL,
+  `price` decimal(10,2) NOT NULL,
+  `quantity` int(11) NOT NULL,
+  `sold` int(11) DEFAULT 0,
+  `color` varchar(50) DEFAULT NULL,
+  `image_url` varchar(255) DEFAULT NULL,
+  `supplier_id` int(11) DEFAULT NULL,
+  `category_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_product_code` (`code`),
+  KEY `fk_product_supplier` (`supplier_id`),
+  KEY `fk_product_category` (`category_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Triggers `nguoidung`
---
 DELIMITER $$
-CREATE TRIGGER `trg_nd_ai` AFTER INSERT ON `nguoidung` FOR EACH ROW BEGIN
-  UPDATE NGUOIDUNG
-    SET MaNguoiDung = CONCAT('ND', LPAD(NEW.id, 4, '0')),
-        MaNhanVien  = CONCAT('NV', LPAD(NEW.id, 4, '0'))
+CREATE TRIGGER trg_product_ai AFTER INSERT ON product
+FOR EACH ROW BEGIN
+  UPDATE product
+    SET code = CONCAT('SP', LPAD(NEW.id, 3, '0'))
   WHERE id = NEW.id;
-END
-$$
+END$$
 DELIMITER ;
 
--- --------------------------------------------------------
-
---
--- Table structure for table `nhacungcap`
---
-
-CREATE TABLE `nhacungcap` (
-  `id` int(11) NOT NULL,
-  `MaNhaCungCap` varchar(6) DEFAULT NULL,
-  `TenNhaCungCap` varchar(255) NOT NULL,
-  `DiaChi` text DEFAULT NULL,
-  `SoDienThoai` varchar(20) DEFAULT NULL,
-  `Email` varchar(255) DEFAULT NULL
+-- ---------------------------
+-- Table: app_user (nguoidung)
+-- ---------------------------
+DROP TABLE IF EXISTS `app_user`;
+CREATE TABLE `app_user` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `code` varchar(6) DEFAULT NULL,
+  `name` varchar(255) NOT NULL,
+  `username` varchar(100) NOT NULL,
+  `password_hash` varchar(255) NOT NULL,
+  `user_group_id` int(11) NOT NULL,
+  `shift` varchar(50) DEFAULT NULL,
+  `employee_code` varchar(6) DEFAULT NULL,
+  `base_salary` decimal(10,2) DEFAULT NULL,
+  `start_date` datetime DEFAULT NULL,
+  `status` varchar(50) DEFAULT 'Active',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_user_username` (`username`),
+  UNIQUE KEY `uk_user_code` (`code`),
+  UNIQUE KEY `uk_user_employee` (`employee_code`),
+  KEY `fk_user_group` (`user_group_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Triggers `nhacungcap`
---
 DELIMITER $$
-CREATE TRIGGER `trg_ncc_ai` AFTER INSERT ON `nhacungcap` FOR EACH ROW BEGIN
-  UPDATE NHACUNGCAP
-    SET MaNhaCungCap = CONCAT('NCC', LPAD(NEW.id, 3, '0'))
+CREATE TRIGGER trg_app_user_ai AFTER INSERT ON app_user
+FOR EACH ROW BEGIN
+  UPDATE app_user
+    SET code = CONCAT('ND', LPAD(NEW.id, 4, '0')),
+        employee_code = CONCAT('NV', LPAD(NEW.id, 4, '0'))
   WHERE id = NEW.id;
-END
-$$
+END$$
 DELIMITER ;
 
--- --------------------------------------------------------
-
---
--- Table structure for table `nhomnguoidung`
---
-
-CREATE TABLE `nhomnguoidung` (
-  `id` int(11) NOT NULL,
-  `MaNhomNguoiDung` varchar(6) DEFAULT NULL,
-  `TenNhomNguoiDung` varchar(255) NOT NULL
+-- ---------------------------
+-- Table: user_group (nhomnguoidung)
+-- ---------------------------
+DROP TABLE IF EXISTS `user_group`;
+CREATE TABLE `user_group` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `code` varchar(6) DEFAULT NULL,
+  `name` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_user_group_code` (`code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Triggers `nhomnguoidung`
---
 DELIMITER $$
-CREATE TRIGGER `trg_nnd_ai` AFTER INSERT ON `nhomnguoidung` FOR EACH ROW BEGIN
-  UPDATE NHOMNGUOIDUNG
-    SET MaNhomNguoiDung = CONCAT('NND', LPAD(NEW.id, 3, '0'))
+CREATE TRIGGER trg_user_group_ai AFTER INSERT ON user_group
+FOR EACH ROW BEGIN
+  UPDATE user_group
+    SET code = CONCAT('NND', LPAD(NEW.id, 3, '0'))
   WHERE id = NEW.id;
-END
-$$
+END$$
 DELIMITER ;
 
--- --------------------------------------------------------
-
---
--- Table structure for table `phanquyen`
---
-
-CREATE TABLE `phanquyen` (
-  `idNhomNguoiDung` int(11) NOT NULL,
-  `idChucNang` int(11) NOT NULL
+-- ---------------------------
+-- Table: invoice (hoadon)
+-- ---------------------------
+DROP TABLE IF EXISTS `invoice`;
+CREATE TABLE `invoice` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `code` varchar(6) DEFAULT NULL,
+  `created_at` datetime NOT NULL,
+  `customer_id` int(11) DEFAULT NULL,
+  `user_id` int(11) DEFAULT NULL,
+  `total` decimal(10,2) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_invoice_code` (`code`),
+  KEY `fk_invoice_customer` (`customer_id`),
+  KEY `fk_invoice_user` (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- --------------------------------------------------------
-
---
--- Table structure for table `phieunhap`
---
-
-CREATE TABLE `phieunhap` (
-  `id` int(11) NOT NULL,
-  `MaPhieuNhap` varchar(6) DEFAULT NULL,
-  `NgayNhap` datetime NOT NULL,
-  `idNhaCungCap` int(11) DEFAULT NULL,
-  `idNguoiDung` int(11) DEFAULT NULL,
-  `TongTien` decimal(10,2) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Triggers `phieunhap`
---
 DELIMITER $$
-CREATE TRIGGER `trg_pn_ai` AFTER INSERT ON `phieunhap` FOR EACH ROW BEGIN
-  UPDATE PHIEUNHAP
-    SET MaPhieuNhap = CONCAT('PN', LPAD(NEW.id, 4, '0'))
+CREATE TRIGGER trg_invoice_ai AFTER INSERT ON invoice
+FOR EACH ROW BEGIN
+  UPDATE invoice
+    SET code = CONCAT('HD', LPAD(NEW.id, 4, '0'))
   WHERE id = NEW.id;
-END
-$$
+END$$
 DELIMITER ;
 
--- --------------------------------------------------------
-
---
--- Table structure for table `sanpham`
---
-
-CREATE TABLE `sanpham` (
-  `id` int(11) NOT NULL,
-  `MaSanPham` varchar(5) DEFAULT NULL,
-  `TenSanPham` varchar(255) NOT NULL,
-  `MoTa` text DEFAULT NULL,
-  `Gia` decimal(10,2) NOT NULL,
-  `SoLuong` int(11) NOT NULL,
-  `DaBan` int(11) DEFAULT 0,
-  `MauSac` varchar(50) DEFAULT NULL,
-  `AnhChiTiet` varchar(255) DEFAULT NULL,
-  `idNhaCungCap` int(11) DEFAULT NULL,
-  `idLoaiSanPham` int(11) NOT NULL
+-- ---------------------------
+-- Table: invoice_item (chitiethoadon)
+-- ---------------------------
+DROP TABLE IF EXISTS `invoice_item`;
+CREATE TABLE `invoice_item` (
+  `invoice_id` int(11) NOT NULL,
+  `product_id` int(11) NOT NULL,
+  `quantity` int(11) NOT NULL,
+  `unit_price` decimal(10,2) NOT NULL,
+  `line_total` decimal(10,2) NOT NULL,
+  PRIMARY KEY (`invoice_id`,`product_id`),
+  KEY `fk_invoice_item_product` (`product_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Triggers `sanpham`
---
+-- ---------------------------
+-- Table: purchase_order (phieunhap)
+-- ---------------------------
+DROP TABLE IF EXISTS `purchase_order`;
+CREATE TABLE `purchase_order` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `code` varchar(6) DEFAULT NULL,
+  `received_at` datetime NOT NULL,
+  `supplier_id` int(11) DEFAULT NULL,
+  `user_id` int(11) DEFAULT NULL,
+  `total` decimal(10,2) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_po_code` (`code`),
+  KEY `fk_po_supplier` (`supplier_id`),
+  KEY `fk_po_user` (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 DELIMITER $$
-CREATE TRIGGER `trg_sp_ai` AFTER INSERT ON `sanpham` FOR EACH ROW BEGIN
-  UPDATE SANPHAM
-    SET MaSanPham = CONCAT('SP', LPAD(NEW.id, 3, '0'))
+CREATE TRIGGER trg_purchase_order_ai AFTER INSERT ON purchase_order
+FOR EACH ROW BEGIN
+  UPDATE purchase_order
+    SET code = CONCAT('PN', LPAD(NEW.id, 4, '0'))
   WHERE id = NEW.id;
-END
-$$
+END$$
 DELIMITER ;
 
--- --------------------------------------------------------
-
---
--- Table structure for table `thamso`
---
-
-CREATE TABLE `thamso` (
-  `id` int(11) NOT NULL,
-  `SoLuongTonToiThieu` int(11) NOT NULL,
-  `MucGiamGia` decimal(5,2) DEFAULT 0.00,
-  `ThoiGianBaoHanh` int(11) DEFAULT 0
+-- ---------------------------
+-- Table: purchase_order_item (chitietphieunhap)
+-- ---------------------------
+DROP TABLE IF EXISTS `purchase_order_item`;
+CREATE TABLE `purchase_order_item` (
+  `purchase_order_id` int(11) NOT NULL,
+  `product_id` int(11) NOT NULL,
+  `quantity` int(11) NOT NULL,
+  `unit_price` decimal(10,2) NOT NULL,
+  `line_total` decimal(10,2) NOT NULL,
+  PRIMARY KEY (`purchase_order_id`,`product_id`),
+  KEY `fk_po_item_product` (`product_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Indexes for dumped tables
---
+-- ---------------------------
+-- Table: group_permission (phanquyen)
+-- ---------------------------
+DROP TABLE IF EXISTS `group_permission`;
+CREATE TABLE `group_permission` (
+  `user_group_id` int(11) NOT NULL,
+  `feature_id` int(11) NOT NULL,
+  PRIMARY KEY (`user_group_id`,`feature_id`),
+  KEY `fk_gp_feature` (`feature_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Indexes for table `chitiethoadon`
---
-ALTER TABLE `chitiethoadon`
-  ADD PRIMARY KEY (`idHoaDon`,`idSanPham`),
-  ADD KEY `fk_cthd_sp` (`idSanPham`);
+-- ---------------------------
+-- Table: system_param (thamso)
+-- ---------------------------
+DROP TABLE IF EXISTS `system_param`;
+CREATE TABLE `system_param` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `min_stock` int(11) NOT NULL,
+  `discount_rate` decimal(5,2) DEFAULT 0.00,
+  `warranty_months` int(11) DEFAULT 0,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Indexes for table `chitietphieunhap`
---
-ALTER TABLE `chitietphieunhap`
-  ADD PRIMARY KEY (`idPhieuNhap`,`idSanPham`),
-  ADD KEY `fk_ctpn_sp` (`idSanPham`);
+-- ---------------------------
+-- Foreign Keys
+-- ---------------------------
+ALTER TABLE `invoice_item`
+  ADD CONSTRAINT fk_invoice_item_invoice FOREIGN KEY (`invoice_id`) REFERENCES `invoice` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT fk_invoice_item_product FOREIGN KEY (`product_id`) REFERENCES `product` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
---
--- Indexes for table `chucnang`
---
-ALTER TABLE `chucnang`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `MaChucNang` (`MaChucNang`);
+ALTER TABLE `purchase_order_item`
+  ADD CONSTRAINT fk_po_item_order FOREIGN KEY (`purchase_order_id`) REFERENCES `purchase_order` (`id`) ON UPDATE CASCADE,
+  ADD CONSTRAINT fk_po_item_product FOREIGN KEY (`product_id`) REFERENCES `product` (`id`) ON UPDATE CASCADE;
 
---
--- Indexes for table `hoadon`
---
-ALTER TABLE `hoadon`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `MaHoaDon` (`MaHoaDon`),
-  ADD KEY `fk_hd_kh` (`idKhachHang`),
-  ADD KEY `fk_hd_nd` (`idNguoiDung`);
+ALTER TABLE `invoice`
+  ADD CONSTRAINT fk_invoice_customer FOREIGN KEY (`customer_id`) REFERENCES `customer` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT fk_invoice_user FOREIGN KEY (`user_id`) REFERENCES `app_user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
---
--- Indexes for table `khachhang`
---
-ALTER TABLE `khachhang`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `MaKhachHang` (`MaKhachHang`);
+ALTER TABLE `app_user`
+  ADD CONSTRAINT fk_user_group FOREIGN KEY (`user_group_id`) REFERENCES `user_group` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
---
--- Indexes for table `loaisanpham`
---
-ALTER TABLE `loaisanpham`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `MaLoaiSanPham` (`MaLoaiSanPham`);
+ALTER TABLE `group_permission`
+  ADD CONSTRAINT fk_gp_feature FOREIGN KEY (`feature_id`) REFERENCES `feature` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT fk_gp_user_group FOREIGN KEY (`user_group_id`) REFERENCES `user_group` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
---
--- Indexes for table `nguoidung`
---
-ALTER TABLE `nguoidung`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `TenDangNhap` (`TenDangNhap`),
-  ADD UNIQUE KEY `MaNguoiDung` (`MaNguoiDung`),
-  ADD UNIQUE KEY `MaNhanVien` (`MaNhanVien`),
-  ADD KEY `fk_nd_nnd` (`idNhomNguoiDung`);
+ALTER TABLE `purchase_order`
+  ADD CONSTRAINT fk_po_supplier FOREIGN KEY (`supplier_id`) REFERENCES `supplier` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT fk_po_user FOREIGN KEY (`user_id`) REFERENCES `app_user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
---
--- Indexes for table `nhacungcap`
---
-ALTER TABLE `nhacungcap`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `MaNhaCungCap` (`MaNhaCungCap`);
+ALTER TABLE `product`
+  ADD CONSTRAINT fk_product_category FOREIGN KEY (`category_id`) REFERENCES `product_category` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT fk_product_supplier FOREIGN KEY (`supplier_id`) REFERENCES `supplier` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
---
--- Indexes for table `nhomnguoidung`
---
-ALTER TABLE `nhomnguoidung`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `MaNhomNguoiDung` (`MaNhomNguoiDung`);
-
---
--- Indexes for table `phanquyen`
---
-ALTER TABLE `phanquyen`
-  ADD PRIMARY KEY (`idNhomNguoiDung`,`idChucNang`),
-  ADD KEY `fk_pq_cn` (`idChucNang`);
-
---
--- Indexes for table `phieunhap`
---
-ALTER TABLE `phieunhap`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `MaPhieuNhap` (`MaPhieuNhap`),
-  ADD KEY `fk_pn_ncc` (`idNhaCungCap`),
-  ADD KEY `fk_pn_nd` (`idNguoiDung`);
-
---
--- Indexes for table `sanpham`
---
-ALTER TABLE `sanpham`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `MaSanPham` (`MaSanPham`),
-  ADD KEY `fk_sp_ncc` (`idNhaCungCap`),
-  ADD KEY `fk_sp_lsp` (`idLoaiSanPham`);
-
---
--- Indexes for table `thamso`
---
-ALTER TABLE `thamso`
-  ADD PRIMARY KEY (`id`);
-
---
--- AUTO_INCREMENT for dumped tables
---
-
---
--- AUTO_INCREMENT for table `chucnang`
---
-ALTER TABLE `chucnang`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `hoadon`
---
-ALTER TABLE `hoadon`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `khachhang`
---
-ALTER TABLE `khachhang`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `loaisanpham`
---
-ALTER TABLE `loaisanpham`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `nguoidung`
---
-ALTER TABLE `nguoidung`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `nhacungcap`
---
-ALTER TABLE `nhacungcap`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `nhomnguoidung`
---
-ALTER TABLE `nhomnguoidung`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `phieunhap`
---
-ALTER TABLE `phieunhap`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `sanpham`
---
-ALTER TABLE `sanpham`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `thamso`
---
-ALTER TABLE `thamso`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- Constraints for dumped tables
---
-
---
--- Constraints for table `chitiethoadon`
---
-ALTER TABLE `chitiethoadon`
-  ADD CONSTRAINT `fk_cthd_hd` FOREIGN KEY (`idHoaDon`) REFERENCES `hoadon` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_cthd_sp` FOREIGN KEY (`idSanPham`) REFERENCES `sanpham` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
---
--- Constraints for table `chitietphieunhap`
---
-ALTER TABLE `chitietphieunhap`
-  ADD CONSTRAINT `fk_ctpn_pn` FOREIGN KEY (`idPhieuNhap`) REFERENCES `phieunhap` (`id`) ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_ctpn_sp` FOREIGN KEY (`idSanPham`) REFERENCES `sanpham` (`id`) ON UPDATE CASCADE;
-
---
--- Constraints for table `hoadon`
---
-ALTER TABLE `hoadon`
-  ADD CONSTRAINT `fk_hd_kh` FOREIGN KEY (`idKhachHang`) REFERENCES `khachhang` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_hd_nd` FOREIGN KEY (`idNguoiDung`) REFERENCES `nguoidung` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
---
--- Constraints for table `nguoidung`
---
-ALTER TABLE `nguoidung`
-  ADD CONSTRAINT `fk_nd_nnd` FOREIGN KEY (`idNhomNguoiDung`) REFERENCES `nhomnguoidung` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
---
--- Constraints for table `phanquyen`
---
-ALTER TABLE `phanquyen`
-  ADD CONSTRAINT `fk_pq_cn` FOREIGN KEY (`idChucNang`) REFERENCES `chucnang` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_pq_nnd` FOREIGN KEY (`idNhomNguoiDung`) REFERENCES `nhomnguoidung` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
---
--- Constraints for table `phieunhap`
---
-ALTER TABLE `phieunhap`
-  ADD CONSTRAINT `fk_pn_ncc` FOREIGN KEY (`idNhaCungCap`) REFERENCES `nhacungcap` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_pn_nd` FOREIGN KEY (`idNguoiDung`) REFERENCES `nguoidung` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
---
--- Constraints for table `sanpham`
---
-ALTER TABLE `sanpham`
-  ADD CONSTRAINT `fk_sp_lsp` FOREIGN KEY (`idLoaiSanPham`) REFERENCES `loaisanpham` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_sp_ncc` FOREIGN KEY (`idNhaCungCap`) REFERENCES `nhacungcap` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+SET FOREIGN_KEY_CHECKS=1;
 COMMIT;
-
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
