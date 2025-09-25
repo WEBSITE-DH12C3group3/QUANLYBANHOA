@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-home',
@@ -119,6 +120,7 @@ import { AuthService } from '../../core/services/auth.service';
 export class HomeComponent {
   private fb = inject(FormBuilder);
   private auth = inject(AuthService);
+  private router = inject(Router);            // ← thêm dòng này
   submitted = signal(false);
   error = signal<string | null>(null);
 
@@ -131,19 +133,22 @@ export class HomeComponent {
   onSubmit() {
     this.submitted.set(true);
     this.error.set(null);
-    if (this.form.invalid) return;
-
-    this.auth.login({
-      username: this.form.value.username!,
-      password: this.form.value.password!,
-    }).subscribe({
-      next: (res) => {
-        this.auth.saveToken(res.token);
-        location.href = '/dashboard'; // hoặc Router điều hướng
-      },
-      error: (err) => {
-        this.error.set(err?.error?.message ?? 'Đăng nhập thất bại, vui lòng thử lại.');
-      }
-    });
+    this.router.navigateByUrl('/admin');      // hoặc '/admin/dashboard'
+    return;
   }
+  //   if (this.form.invalid) return;
+
+  //   this.auth.login({
+  //     username: this.form.value.username!,
+  //     password: this.form.value.password!,
+  //   }).subscribe({
+  //     next: (res) => {
+  //       this.auth.saveToken(res.token);
+  //       location.href = '/dashboard'; // hoặc Router điều hướng
+  //     },
+  //     error: (err) => {
+  //       this.error.set(err?.error?.message ?? 'Đăng nhập thất bại, vui lòng thử lại.');
+  //     }
+  //   });
+  // }
 }

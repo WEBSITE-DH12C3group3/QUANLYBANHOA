@@ -1,0 +1,28 @@
+<!-- Admin Layout: fixed sidebar + header + content -->
+<div class="min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100">
+  <!-- Mobile overlay -->
+  <div 
+    class="fixed inset-0 z-30 bg-black/40 backdrop-blur-sm transition-opacity lg:hidden"
+    *ngIf="sidebar.open"
+    (click)="sidebar.close()"></div>
+
+  <!-- Sidebar -->
+  <app-sidebar class="fixed inset-y-0 left-0 z-40 w-72 hidden lg:block"></app-sidebar>
+
+  <!-- Mobile drawer -->
+  <div class="fixed inset-y-0 left-0 z-40 w-72 lg:hidden transform transition-transform duration-300" 
+       [class.-translate-x-full]="!sidebar.open">
+    <app-sidebar></app-sidebar>
+  </div>
+
+  <!-- Main column -->
+  <div class="lg:pl-72">
+    <app-header></app-header>
+
+    <main class="p-4 sm:p-6 lg:p-8">
+      <div class="rounded-2xl border border-slate-200/60 dark:border-slate-800 bg-white/80 dark:bg-slate-900/60 shadow-[0_8px_30px_rgb(0,0,0,0.05)]">
+        <router-outlet></router-outlet>
+      </div>
+    </main>
+  </div>
+</div>
