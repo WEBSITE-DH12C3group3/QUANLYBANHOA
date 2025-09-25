@@ -1,0 +1,24 @@
+<div class="flex justify-center items-center h-screen bg-gray-100">
+  <div class="bg-white p-8 rounded-xl shadow-md w-96">
+    <h2 class="text-2xl font-bold text-center mb-6">Đăng ký</h2>
+
+    <input [(ngModel)]="fullName" placeholder="Họ tên"
+      class="w-full p-3 border rounded mb-4 focus:outline-none focus:ring-2 focus:ring-pink-400">
+
+    <input [(ngModel)]="email" type="email" placeholder="Email"
+      class="w-full p-3 border rounded mb-4 focus:outline-none focus:ring-2 focus:ring-pink-400">
+
+    <input [(ngModel)]="phone" placeholder="Số điện thoại"
+      class="w-full p-3 border rounded mb-4 focus:outline-none focus:ring-2 focus:ring-pink-400">
+
+    <input [(ngModel)]="passwordHash" type="password" placeholder="Mật khẩu"
+      class="w-full p-3 border rounded mb-4 focus:outline-none focus:ring-2 focus:ring-pink-400">
+
+    <button (click)="onRegister()"
+      class="w-full bg-pink-500 text-white py-3 rounded hover:bg-pink-600 transition">
+      Đăng ký
+    </button>
+
+    <p class="text-center text-sm mt-4 text-gray-500">{{ message }}</p>
+  </div>
+</div>
