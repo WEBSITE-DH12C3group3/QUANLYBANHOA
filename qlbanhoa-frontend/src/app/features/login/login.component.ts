@@ -1,28 +1,28 @@
-import { Component, signal } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../layout/services/auth.service';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule], // ✅ cần để Angular hiểu formGroup
   templateUrl: './login.component.html'
 })
 export class LoginComponent {
-  form!: FormGroup;   // khai báo trước
-  error = signal<string | null>(null);
+  form: FormGroup;
+  errorMessage: string | null = null;
   submittedFlag = false;
 
   constructor(
     private fb: FormBuilder,
-    private authService: AuthService,
+    private auth: AuthService,
     private router: Router
   ) {
-    // khởi tạo form trong constructor
+    // ✅ Tạo FormGroup với field email, password, remember
     this.form = this.fb.group({
-      username: ['', Validators.required],
+      email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(4)]],
       remember: [false]
     });
@@ -32,19 +32,23 @@ export class LoginComponent {
     return this.submittedFlag;
   }
 
+  error() {
+    return this.errorMessage;
+  }
+
   onSubmit() {
     this.submittedFlag = true;
-
     if (this.form.invalid) return;
 
-    const { username, password } = this.form.value;
-    this.authService.login(username!, password!).subscribe({
+    const { email, password } = this.form.value;
+
+    this.auth.login(email, password).subscribe({
       next: (res) => {
-        this.authService.saveToken(res.token);
-        this.router.navigate(['/admin']); // ví dụ chuyển hướng admin
+        this.auth.saveToken(res.token);
+        this.router.navigate(['/admin/dashboard']);
       },
       error: () => {
-        this.error.set('Sai email hoặc mật khẩu');
+        this.errorMessage = 'Sai email hoặc mật khẩu';
       }
     });
   }

@@ -1,6 +1,8 @@
+// Role.java
 package com.banhoa.backend.role;
 
 import com.banhoa.backend.permission.Permission;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -9,13 +11,10 @@ import java.util.Set;
 
 @Entity
 @Table(name = "roles")
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
+@Getter @Setter
+@NoArgsConstructor @AllArgsConstructor @Builder
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Role {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;

@@ -1,7 +1,7 @@
 <div class="min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-emerald-50">
   <div class="mx-auto max-w-7xl px-4 py-10 lg:py-16">
     <div class="grid lg:grid-cols-2 gap-10 items-center">
-      
+
       <!-- Left: Hero -->
       <section class="space-y-6">
         <div class="inline-flex items-center gap-2 rounded-full bg-white/70 px-3 py-1 shadow">
@@ -35,9 +35,12 @@
 
         <div class="flex items-center gap-4">
           <a routerLink="/products"
-             class="inline-flex items-center gap-2 rounded-xl bg-black text-white px-4 py-2.5 hover:opacity-90">
+            class="inline-flex items-center gap-2 rounded-xl bg-black text-white px-4 py-2.5 hover:opacity-90">
             Khám phá nhanh
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            </svg>
           </a>
           <span class="text-sm text-gray-500">hoặc đăng nhập để bắt đầu</span>
         </div>
@@ -58,14 +61,15 @@
             </div>
           </div>
 
+          <!-- ✅ Form login -->
           <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-4">
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Tài khoản</label>
-              <input type="text" formControlName="username" autocomplete="username"
+              <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+              <input type="text" formControlName="email" autocomplete="username"
                 class="w-full rounded-xl border px-3 py-2.5 focus:outline-none focus:ring-2 ring-emerald-500" />
-              <p class="mt-1 text-xs text-rose-600" *ngIf="submitted() && form.get('username')?.invalid">
-  Vui lòng nhập tài khoản
-</p>
+              <p class="mt-1 text-xs text-rose-600" *ngIf="submitted() && form.get('email')?.invalid">
+                Vui lòng nhập email hợp lệ
+              </p>
             </div>
 
             <div>
@@ -73,8 +77,8 @@
               <input type="password" formControlName="password" autocomplete="current-password"
                 class="w-full rounded-xl border px-3 py-2.5 focus:outline-none focus:ring-2 ring-emerald-500" />
               <p class="mt-1 text-xs text-rose-600" *ngIf="submitted() && form.get('password')?.invalid">
-  Mật khẩu tối thiểu 4 ký tự
-</p>
+                Mật khẩu tối thiểu 4 ký tự
+              </p>
             </div>
 
             <div class="flex items-center justify-between">
@@ -96,7 +100,8 @@
           </form>
 
           <p class="text-xs text-gray-500 mt-6">
-            Demo: username <code class="px-1 rounded bg-gray-100">admin</code>, password <code class="px-1 rounded bg-gray-100">123456</code>
+            Demo: email <code class="px-1 rounded bg-gray-100">admin1@example.com</code>, password <code
+              class="px-1 rounded bg-gray-100">123456</code>
           </p>
         </div>
       </section>

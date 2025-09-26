@@ -1,14 +1,19 @@
 package com.banhoa.backend.user;
 
 import com.banhoa.backend.role.Role;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.banhoa.backend.common.Status;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 @Entity
 @Table(name = "users")
 @Getter
@@ -23,17 +28,23 @@ public class User implements org.springframework.security.core.userdetails.UserD
     private Integer id;
 
     private String email;
-
     private String phone;
 
     @Column(name = "full_name")
     private String fullName;
 
+    // 👉 Raw password nhận từ FE (login, register)
+    @Transient
+    @JsonProperty("password")
+    private String rawPassword;
+
+    // 👉 Password hash lưu trong DB
     @Column(name = "password_hash")
+    @JsonProperty("passwordHash")
     private String passwordHash;
 
     @Enumerated(EnumType.STRING)
-    private Status status; // active, inactive, banned
+    private Status status;
 
     @Column(name = "last_login_at")
     private LocalDateTime lastLoginAt;
@@ -55,17 +66,7 @@ public class User implements org.springframework.security.core.userdetails.UserD
     /* ========== Spring Security ========== */
 
     @Override
-    public Set<? extends org.springframework.security.core.GrantedAuthority> getAuthorities() {
-        Set<org.springframework.security.core.authority.SimpleGrantedAuthority> authorities = new HashSet<>();
-        for (Role role : roles) {
-            authorities.add(new org.springframework.security.core.authority.SimpleGrantedAuthority("ROLE_" + role.getName()));
-            role.getPermissions().forEach(p ->
-                    authorities.add(new org.springframework.security.core.authority.SimpleGrantedAuthority(p.getCode())));
-        }
-        return authorities;
-    }
-
-    @Override
+    @JsonIgnore // 🚀 Không serialize vào JSON nữa
     public String getPassword() {
         return passwordHash;
     }
@@ -76,22 +77,18 @@ public class User implements org.springframework.security.core.userdetails.UserD
     }
 
     @Override
-    public boolean isAccountNonExpired() {
-        return status == Status.active;
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        Set<SimpleGrantedAuthority> authorities = new HashSet<>();
+        for (Role role : roles) {
+            authorities.add(new SimpleGrantedAuthority("ROLE_" + role.getName()));
+            role.getPermissions().forEach(p ->
+                    authorities.add(new SimpleGrantedAuthority(p.getCode())));
+        }
+        return authorities;
     }
 
-    @Override
-    public boolean isAccountNonLocked() {
-        return status == Status.active;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return status == Status.active;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return status == Status.active;
-    }
+    @Override public boolean isAccountNonExpired() { return status == Status.active; }
+    @Override public boolean isAccountNonLocked() { return status == Status.active; }
+    @Override public boolean isCredentialsNonExpired() { return status == Status.active; }
+    @Override public boolean isEnabled() { return status == Status.active; }
 }

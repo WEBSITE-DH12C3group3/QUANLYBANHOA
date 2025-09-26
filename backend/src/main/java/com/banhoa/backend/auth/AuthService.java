@@ -21,33 +21,40 @@ public class AuthService {
     private final JwtService jwtService;
 
     /** Đăng ký tài khoản mới (mặc định role = customer) */
-public User register(User user) {
-    if (userRepository.existsByEmail(user.getEmail())) {
-        throw new RuntimeException("Email đã tồn tại");
+    public User register(User user) {
+        if (userRepository.existsByEmail(user.getEmail())) {
+            throw new RuntimeException("Email đã tồn tại");
+        }
+
+        // Hash mật khẩu từ rawPassword
+        user.setPasswordHash(passwordEncoder.encode(user.getRawPassword()));
+        user.setRawPassword(null); // xoá raw password cho an toàn
+        user.setStatus(Status.active);
+        user.setCreatedAt(LocalDateTime.now());
+        user.setUpdatedAt(LocalDateTime.now());
+
+        // Gán mặc định role customer
+        Role role = new Role();
+        role.setId(3); // giả định role_id = 3 là "customer"
+        user.getRoles().add(role);
+
+        return userRepository.save(user);
     }
-
-    user.setPasswordHash(passwordEncoder.encode(user.getPasswordHash()));
-    user.setStatus(Status.active);
-    user.setCreatedAt(LocalDateTime.now());
-    user.setUpdatedAt(LocalDateTime.now());
-
-    Role role = new Role();
-    role.setId(3); // mặc định customer
-    user.getRoles().add(role);
-
-    return userRepository.save(user);
-}
-
 
     /** Đăng nhập trả về token + thông tin */
     public Map<String, Object> login(User reqUser) {
         User dbUser = userRepository.findByEmail(reqUser.getEmail())
                 .orElseThrow(() -> new RuntimeException("Sai email hoặc mật khẩu"));
 
-        if (!passwordEncoder.matches(reqUser.getPasswordHash(), dbUser.getPasswordHash())) {
+        // ✅ Lấy password từ rawPassword (FE gửi) hoặc fallback passwordHash (Postman test)
+        String rawPassword = reqUser.getRawPassword();
+        if (rawPassword == null) rawPassword = reqUser.getPasswordHash();
+
+        if (rawPassword == null || !passwordEncoder.matches(rawPassword, dbUser.getPasswordHash())) {
             throw new RuntimeException("Sai email hoặc mật khẩu");
         }
 
+        // Sinh JWT token
         String token = jwtService.generateToken(dbUser);
 
         Map<String, Object> res = new HashMap<>();

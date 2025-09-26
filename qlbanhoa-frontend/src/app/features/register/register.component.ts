@@ -13,7 +13,7 @@ export class RegisterComponent {
   fullName = '';
   email = '';
   phone = '';
-  passwordHash = '';
+  password    = '';
   message = '';
 
   constructor(private authService: AuthService) {}
@@ -23,7 +23,7 @@ export class RegisterComponent {
       fullName: this.fullName,
       email: this.email,
       phone: this.phone,
-      passwordHash: this.passwordHash
+      password   : this.password   
     };
 
     this.authService.register(payload).subscribe({

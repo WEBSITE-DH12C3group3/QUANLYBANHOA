@@ -2,9 +2,8 @@ import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { AuthService } from '../../core/services/auth.service';
 import { Router } from '@angular/router';
-
+import { AuthService } from '../../layout/services/auth.service';
 @Component({
   selector: 'app-home',
   standalone: true,
