@@ -1,0 +1,79 @@
+<div class="p-6 space-y-8">
+  <!-- Thêm role -->
+  <div class="p-6 rounded-2xl bg-slate-800 shadow-lg">
+    <h3 class="text-lg font-semibold mb-4 text-pink-400">➕ Thêm Role</h3>
+
+    <div class="grid grid-cols-2 gap-4">
+      <input [(ngModel)]="newRole.name" placeholder="Tên role"
+             class="bg-slate-700 text-white px-3 py-2 rounded-lg w-full" />
+
+      <select [(ngModel)]="newRole.permissions" multiple
+              class="col-span-2 bg-slate-700 text-white px-3 py-2 rounded-lg w-full">
+        <option *ngFor="let p of permissions" [ngValue]="p.id">{{ p.code }}</option>
+      </select>
+    </div>
+
+    <button (click)="addRole()"
+            class="mt-4 bg-gradient-to-r from-pink-400 to-fuchsia-500 px-4 py-2 rounded-lg text-slate-900 font-semibold">
+      Thêm role
+    </button>
+  </div>
+
+  <!-- Danh sách role -->
+  <div class="p-6 rounded-2xl bg-slate-800 shadow-lg">
+    <h3 class="text-lg font-semibold mb-4 text-pink-400">📋 Danh sách Roles</h3>
+
+    <table class="w-full text-sm text-left text-slate-300">
+      <thead class="bg-slate-700 text-slate-100">
+        <tr>
+          <th class="px-4 py-2">ID</th>
+          <th class="px-4 py-2">Tên role</th>
+          <th class="px-4 py-2">Permissions</th>
+          <th class="px-4 py-2">Hành động</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let r of roles" class="border-b border-slate-700">
+          <td class="px-4 py-2">{{ r.id }}</td>
+          <td class="px-4 py-2">{{ r.name }}</td>
+          <td class="px-4 py-2">
+            <span *ngFor="let p of r.permissions"
+                  class="inline-block px-2 py-1 text-xs rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 text-white mr-1">
+              {{ p.code }}
+            </span>
+          </td>
+          <td class="px-4 py-2">
+            <button class="text-blue-400 hover:underline mr-2" (click)="startEdit(r)">Sửa</button>
+            <button class="text-pink-500 hover:underline" (click)="deleteRole(r.id)">Xóa</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Form sửa -->
+  <div *ngIf="editRole" class="p-6 rounded-2xl bg-slate-800 shadow-lg">
+    <h3 class="text-lg font-semibold mb-4 text-pink-400">✏️ Sửa Role</h3>
+
+    <div class="grid grid-cols-2 gap-4">
+      <input [(ngModel)]="editRole.name" placeholder="Tên role"
+             class="bg-slate-700 text-white px-3 py-2 rounded-lg w-full" />
+
+      <select [(ngModel)]="editRole.permissions" multiple
+              class="col-span-2 bg-slate-700 text-white px-3 py-2 rounded-lg w-full">
+        <option *ngFor="let p of permissions" [ngValue]="p.id">{{ p.code }}</option>
+      </select>
+    </div>
+
+    <div class="mt-4 flex gap-3">
+      <button (click)="updateRole()"
+              class="bg-gradient-to-r from-green-400 to-emerald-500 px-4 py-2 rounded-lg text-slate-900 font-semibold">
+        Lưu
+      </button>
+      <button (click)="editRole=null"
+              class="bg-slate-600 px-4 py-2 rounded-lg text-white">
+        Hủy
+      </button>
+    </div>
+  </div>
+</div>

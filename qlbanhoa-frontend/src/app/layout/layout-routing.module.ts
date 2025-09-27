@@ -2,7 +2,8 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AdminLayoutComponent } from './admin-layout.component';
 import { FeaturePlaceholderComponent } from '../../app/features/feature-placeholder.component';
-
+import { UsersComponent } from '../admin/user/users.component';
+import { RolesComponent } from '../admin/role/roles.component';
 const routes: Routes = [
   {
     path: '',
@@ -20,8 +21,8 @@ const routes: Routes = [
       { path: 'promotions', component: FeaturePlaceholderComponent, data: { title: 'Promotions' } },
       { path: 'shipping', component: FeaturePlaceholderComponent, data: { title: 'Shipping' } },
       { path: 'payments', component: FeaturePlaceholderComponent, data: { title: 'Payments' } },
-      { path: 'users', component: FeaturePlaceholderComponent, data: { title: 'Users' } },
-      { path: 'roles', component: FeaturePlaceholderComponent, data: { title: 'Roles' } },
+      { path: 'users', component: UsersComponent, data: { title: 'Users' } },
+      { path: 'roles', component: RolesComponent, data: { title: 'Roles' } },
       { path: 'permissions', component: FeaturePlaceholderComponent, data: { title: 'Permissions' } },
       { path: 'settings', component: FeaturePlaceholderComponent, data: { title: 'Settings' } },
     ]

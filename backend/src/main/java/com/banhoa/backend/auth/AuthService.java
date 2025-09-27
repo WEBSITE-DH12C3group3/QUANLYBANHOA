@@ -1,6 +1,7 @@
 package com.banhoa.backend.auth;
 
 import com.banhoa.backend.role.Role;
+import com.banhoa.backend.role.RoleRepository;
 import com.banhoa.backend.user.User;
 import com.banhoa.backend.user.UserRepository;
 import com.banhoa.backend.security.JwtService;
@@ -17,6 +18,7 @@ import java.util.*;
 public class AuthService {
 
     private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
 
@@ -28,37 +30,33 @@ public class AuthService {
 
         // Hash mật khẩu từ rawPassword
         user.setPasswordHash(passwordEncoder.encode(user.getRawPassword()));
-        user.setRawPassword(null); // xoá raw password cho an toàn
         user.setStatus(Status.active);
         user.setCreatedAt(LocalDateTime.now());
         user.setUpdatedAt(LocalDateTime.now());
 
         // Gán mặc định role customer
-        Role role = new Role();
-        role.setId(3); // giả định role_id = 3 là "customer"
+        Role role = roleRepository.findByNameIgnoreCase("customer")
+                .orElseThrow(() -> new RuntimeException("Role 'customer' not found"));
         user.getRoles().add(role);
 
         return userRepository.save(user);
     }
 
-    /** Đăng nhập trả về token + thông tin */
-    public Map<String, Object> login(User reqUser) {
-        User dbUser = userRepository.findByEmail(reqUser.getEmail())
+    /** Đăng nhập trả về accessToken + refreshToken + thông tin user */
+    public Map<String, Object> login(String email, String rawPassword) {
+        User dbUser = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Sai email hoặc mật khẩu"));
 
-        // ✅ Lấy password từ rawPassword (FE gửi) hoặc fallback passwordHash (Postman test)
-        String rawPassword = reqUser.getRawPassword();
-        if (rawPassword == null) rawPassword = reqUser.getPasswordHash();
-
-        if (rawPassword == null || !passwordEncoder.matches(rawPassword, dbUser.getPasswordHash())) {
+        // So khớp mật khẩu
+        if (!passwordEncoder.matches(rawPassword, dbUser.getPassword())) {
             throw new RuntimeException("Sai email hoặc mật khẩu");
         }
 
-        // Sinh JWT token
-        String token = jwtService.generateToken(dbUser);
+        // Sinh JWT tokens
+        Map<String, String> tokens = jwtService.generateTokens(dbUser);
 
         Map<String, Object> res = new HashMap<>();
-        res.put("token", token);
+        res.put("id", dbUser.getId());
         res.put("email", dbUser.getEmail());
         res.put("fullName", dbUser.getFullName());
         res.put("roles", dbUser.getRoles().stream().map(Role::getName).toList());
@@ -67,6 +65,8 @@ public class AuthService {
                 .map(p -> p.getCode())
                 .distinct()
                 .toList());
+        res.put("accessToken", tokens.get("accessToken"));
+        res.put("refreshToken", tokens.get("refreshToken"));
 
         return res;
     }

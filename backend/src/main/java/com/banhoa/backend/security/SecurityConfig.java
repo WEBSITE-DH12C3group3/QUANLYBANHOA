@@ -34,15 +34,17 @@ public class SecurityConfig {
                 // tắt csrf vì API stateless
                 .csrf(csrf -> csrf.disable())
                 // bật CORS
-                .cors(cors -> {})
+                .cors(cors -> {
+                })
                 // không lưu session
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 // phân quyền cho request
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**").permitAll() // login + register
-                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // preflight request
-                        .anyRequest().authenticated()
-                )
+                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                        .requestMatchers("/api/users/**", "/api/roles/**").hasRole("ADMIN")
+                        .anyRequest().authenticated())
+
                 // cấu hình authentication
                 .authenticationProvider(authenticationProvider())
                 // thêm JWT filter

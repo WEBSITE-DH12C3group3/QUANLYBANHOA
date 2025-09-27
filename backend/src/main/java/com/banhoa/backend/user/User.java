@@ -76,16 +76,19 @@ public class User implements org.springframework.security.core.userdetails.UserD
         return email;
     }
 
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        Set<SimpleGrantedAuthority> authorities = new HashSet<>();
-        for (Role role : roles) {
-            authorities.add(new SimpleGrantedAuthority("ROLE_" + role.getName()));
-            role.getPermissions().forEach(p ->
-                    authorities.add(new SimpleGrantedAuthority(p.getCode())));
-        }
-        return authorities;
+@Override
+public Collection<? extends GrantedAuthority> getAuthorities() {
+    Set<SimpleGrantedAuthority> authorities = new HashSet<>();
+    for (Role role : roles) {
+        // luôn prefix ROLE_ và chuyển role name về chữ hoa
+        authorities.add(new SimpleGrantedAuthority("ROLE_" + role.getName().toUpperCase()));
+        role.getPermissions().forEach(p ->
+            authorities.add(new SimpleGrantedAuthority(p.getCode()))
+        );
     }
+    return authorities;
+}
+
 
     @Override public boolean isAccountNonExpired() { return status == Status.active; }
     @Override public boolean isAccountNonLocked() { return status == Status.active; }

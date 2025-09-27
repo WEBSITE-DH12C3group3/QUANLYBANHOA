@@ -42,14 +42,15 @@ export class LoginComponent {
 
     const { email, password } = this.form.value;
 
-    this.auth.login(email, password).subscribe({
-      next: (res) => {
-        this.auth.saveToken(res.token);
-        this.router.navigate(['/admin/dashboard']);
-      },
-      error: () => {
-        this.errorMessage = 'Sai email hoặc mật khẩu';
-      }
-    });
+this.auth.login(this.form.value.email, this.form.value.password).subscribe({
+  next: (res) => {
+    console.log("Login success:", res);
+    this.router.navigate(['/admin']);
+  },
+  error: (err) => {
+    console.error("Login failed", err);
+  }
+});
+
   }
 }

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 
 interface NavItem {
@@ -17,7 +17,7 @@ interface NavItem {
   templateUrl: './sidebar.component.html'
 })
 export class SidebarComponent implements OnInit {
-  constructor(public auth: AuthService) {}
+  constructor(public auth: AuthService,private router: Router) { }
 
   // Danh sách menu + quyền tương ứng
   nav: NavItem[] = [
@@ -38,24 +38,27 @@ export class SidebarComponent implements OnInit {
     { label: 'Settings', path: '/admin/settings', permission: 'setting.read' }
   ];
 
-ngOnInit() {
-  if (this.auth.isLoggedIn()) {
-    this.auth.loadProfile().subscribe();
-    console.log('Nav:', this.nav);
-  console.log('User profile:', this.auth.getProfile());
+  ngOnInit() {
+    if (this.auth.isLoggedIn()) {
+      this.auth.loadProfile().subscribe();
+      console.log('Nav:', this.nav);
+      console.log('User profile:', this.auth.getProfile());
+    }
   }
-}
 
-canAccess(item: any): boolean {
-  const user = this.auth.getProfile();  // lấy profile từ AuthService
-  if (!user) return false;
+  canAccess(item: any): boolean {
+    const user = this.auth.getProfile();  // lấy profile từ AuthService
+    if (!user) return false;
 
-  // nếu không cấu hình roles thì cho phép luôn
-  if (!item.roles || item.roles.length === 0) return true;
+    // nếu không cấu hình roles thì cho phép luôn
+    if (!item.roles || item.roles.length === 0) return true;
 
-  // kiểm tra user.roles có giao với item.roles
-  return user.roles.some((r: string) => item.roles.includes(r));
-}
-
+    // kiểm tra user.roles có giao với item.roles
+    return user.roles.some((r: string) => item.roles.includes(r));
+  }
+logout() {
+    this.auth.logout();
+    this.router.navigate(['/login']);
+  }
 
 }

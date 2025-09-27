@@ -2,10 +2,12 @@ package com.banhoa.backend.user;
 
 import com.banhoa.backend.role.Role;
 import com.banhoa.backend.role.RoleRepository;
+import com.banhoa.backend.common.Status;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -17,14 +19,14 @@ public class UserController {
 
     private final UserService userService;
     private final RoleRepository roleRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    // ✅ Lấy tất cả user
+    // ✅ Lấy tất cả user (chỉ ADMIN)
     @GetMapping
     public ResponseEntity<List<User>> getAllUsers() {
         return ResponseEntity.ok(userService.getAllUsers());
     }
 
-    // ✅ Lấy user theo ID
     @GetMapping("/{id}")
     public ResponseEntity<User> getUserById(@PathVariable Integer id) {
         return userService.getUserById(id)
@@ -32,21 +34,34 @@ public class UserController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    // ✅ Lấy profile user đang đăng nhập
-    @GetMapping("/me/profile")
-    public ResponseEntity<User> getMyProfile(@AuthenticationPrincipal UserDetails principal) {
-        return userService.getUserByEmail(principal.getUsername())
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    // ✅ Lấy profile user hiện tại
+ @GetMapping("/me/profile")
+    public ResponseEntity<?> getProfile(@AuthenticationPrincipal User user) {
+        if (user == null) {
+            return ResponseEntity.status(401).body("Not authenticated");
+        }
+
+        Map<String, Object> res = new HashMap<>();
+        res.put("id", user.getId());
+        res.put("email", user.getEmail());
+        res.put("fullName", user.getFullName());
+        res.put("roles", user.getRoles().stream().map(r -> r.getName()).toList());
+        res.put("permissions", user.getRoles().stream()
+                .flatMap(r -> r.getPermissions().stream())
+                .map(p -> p.getCode())
+                .distinct()
+                .toList());
+
+        return ResponseEntity.ok(res);
     }
 
-    // ✅ Tạo user mới + gán role
+    // ✅ Thêm user mới
     @PostMapping
     public ResponseEntity<User> createUser(@RequestBody Map<String, Object> payload) {
         String email = (String) payload.get("email");
         String fullName = (String) payload.get("fullName");
         String phone = (String) payload.get("phone");
-        String passwordHash = (String) payload.get("passwordHash"); // đã hash trước khi gửi
+        String rawPassword = (String) payload.get("password"); // FE gửi raw password
 
         List<Integer> roleIds = (List<Integer>) payload.get("roleIds");
 
@@ -54,8 +69,8 @@ public class UserController {
         user.setEmail(email);
         user.setFullName(fullName);
         user.setPhone(phone);
-        user.setPasswordHash(passwordHash);
-        user.setStatus(com.banhoa.backend.common.Status.active);
+        user.setPasswordHash(passwordEncoder.encode(rawPassword)); // ✅ hash tại backend
+        user.setStatus(Status.active);
         user.setCreatedAt(java.time.LocalDateTime.now());
         user.setUpdatedAt(java.time.LocalDateTime.now());
 
@@ -65,13 +80,17 @@ public class UserController {
         return ResponseEntity.ok(userService.saveUser(user));
     }
 
-    // ✅ Cập nhật user (gồm roles)
+    // ✅ Cập nhật user (kèm roles)
     @PutMapping("/{id}")
     public ResponseEntity<User> updateUser(@PathVariable Integer id, @RequestBody Map<String, Object> payload) {
         return userService.getUserById(id).map(user -> {
             if (payload.containsKey("fullName")) user.setFullName((String) payload.get("fullName"));
             if (payload.containsKey("phone")) user.setPhone((String) payload.get("phone"));
-            if (payload.containsKey("status")) user.setStatus(com.banhoa.backend.common.Status.valueOf((String) payload.get("status")));
+            if (payload.containsKey("status")) user.setStatus(Status.valueOf((String) payload.get("status")));
+            if (payload.containsKey("password")) {
+                String rawPassword = (String) payload.get("password");
+                user.setPasswordHash(passwordEncoder.encode(rawPassword));
+            }
             if (payload.containsKey("roleIds")) {
                 List<Integer> roleIds = (List<Integer>) payload.get("roleIds");
                 Set<Role> roles = new HashSet<>(roleRepository.findAllById(roleIds));
