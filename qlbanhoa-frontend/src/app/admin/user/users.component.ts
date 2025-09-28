@@ -42,7 +42,7 @@ export class UsersComponent implements OnInit {
       fullName: this.newUser.fullName,
       email: this.newUser.email,
       phone: this.newUser.phone,
-      passwordHash: this.newUser.password, // backend đang nhận passwordHash
+      password: this.newUser.password, // backend đang nhận passwordHash
       roleIds: this.newUser.roles
     };
 

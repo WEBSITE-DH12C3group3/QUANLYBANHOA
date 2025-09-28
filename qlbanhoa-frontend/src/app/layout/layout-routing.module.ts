@@ -4,6 +4,7 @@ import { AdminLayoutComponent } from './admin-layout.component';
 import { FeaturePlaceholderComponent } from '../../app/features/feature-placeholder.component';
 import { UsersComponent } from '../admin/user/users.component';
 import { RolesComponent } from '../admin/role/roles.component';
+import { PermissionsComponent } from '../admin/permisison/permissions.component';
 const routes: Routes = [
   {
     path: '',
@@ -23,7 +24,7 @@ const routes: Routes = [
       { path: 'payments', component: FeaturePlaceholderComponent, data: { title: 'Payments' } },
       { path: 'users', component: UsersComponent, data: { title: 'Users' } },
       { path: 'roles', component: RolesComponent, data: { title: 'Roles' } },
-      { path: 'permissions', component: FeaturePlaceholderComponent, data: { title: 'Permissions' } },
+      { path: 'permissions', component: PermissionsComponent, data: { title: 'Permissions' } },
       { path: 'settings', component: FeaturePlaceholderComponent, data: { title: 'Settings' } },
     ]
   }

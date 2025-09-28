@@ -81,6 +81,8 @@ public Collection<? extends GrantedAuthority> getAuthorities() {
     Set<SimpleGrantedAuthority> authorities = new HashSet<>();
     for (Role role : roles) {
         // luôn prefix ROLE_ và chuyển role name về chữ hoa
+         String roleName = "ROLE_" + role.getName().toUpperCase();
+        System.out.println("[Authorities] role=" + roleName);
         authorities.add(new SimpleGrantedAuthority("ROLE_" + role.getName().toUpperCase()));
         role.getPermissions().forEach(p ->
             authorities.add(new SimpleGrantedAuthority(p.getCode()))

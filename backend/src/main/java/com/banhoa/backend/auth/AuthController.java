@@ -29,45 +29,44 @@ public class AuthController {
     }
 
     /** ========== API Đăng nhập ========== */
-@PostMapping("/login")
-public ResponseEntity<?> login(@RequestBody Map<String, String> body) {
-    String email = body.get("email");
-    String password = body.get("password");
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody Map<String, String> body) {
+        String email = body.get("email");
+        String password = body.get("password");
 
-    System.out.println("📩 Login request email=" + email + ", password=" + password);
+        System.out.println("📩 Login request email=" + email + ", password=" + password);
 
-    User user = userRepository.findByEmail(email)
-            .orElseThrow(() -> new RuntimeException("User not found"));
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
-    if (!passwordEncoder.matches(password, user.getPassword())) {
-        System.out.println("❌ Wrong password for user=" + email);
-        return ResponseEntity.status(403).body("Sai email hoặc mật khẩu");
+        if (!passwordEncoder.matches(password, user.getPassword())) {
+            System.out.println("❌ Wrong password for user=" + email);
+            return ResponseEntity.status(403).body("Sai email hoặc mật khẩu");
+        }
+
+        // ✅ Generate tokens
+        Map<String, String> tokens = jwtService.generateTokens(user);
+
+        // 🚀 Log token để kiểm tra
+        System.out.println("✅ accessToken=" + tokens.get("accessToken"));
+        System.out.println("✅ refreshToken=" + tokens.get("refreshToken"));
+
+        // ✅ Build response
+        Map<String, Object> res = new HashMap<>();
+        res.put("id", user.getId());
+        res.put("email", user.getEmail());
+        res.put("fullName", user.getFullName());
+        res.put("roles", user.getRoles().stream().map(r -> r.getName()).toList());
+        res.put("permissions", user.getRoles().stream()
+                .flatMap(r -> r.getPermissions().stream())
+                .map(p -> p.getCode())
+                .distinct()
+                .toList());
+        res.put("accessToken", tokens.get("accessToken"));
+        res.put("refreshToken", tokens.get("refreshToken"));
+
+        return ResponseEntity.ok(res);
     }
-
-    // ✅ Generate tokens
-    Map<String, String> tokens = jwtService.generateTokens(user);
-
-    // 🚀 Log token để kiểm tra
-    System.out.println("✅ accessToken=" + tokens.get("accessToken"));
-    System.out.println("✅ refreshToken=" + tokens.get("refreshToken"));
-
-    // ✅ Build response
-    Map<String, Object> res = new HashMap<>();
-    res.put("id", user.getId());
-    res.put("email", user.getEmail());
-    res.put("fullName", user.getFullName());
-    res.put("roles", user.getRoles().stream().map(r -> r.getName()).toList());
-    res.put("permissions", user.getRoles().stream()
-            .flatMap(r -> r.getPermissions().stream())
-            .map(p -> p.getCode())
-            .distinct()
-            .toList());
-    res.put("accessToken", tokens.get("accessToken"));
-    res.put("refreshToken", tokens.get("refreshToken"));
-
-    return ResponseEntity.ok(res);
-}
-
 
     /** ========== API Refresh Token ========== */
     @PostMapping("/refresh")

@@ -43,6 +43,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/api/users/**", "/api/roles/**").hasRole("ADMIN")
+                        .requestMatchers("/api/permissions/**").hasRole("ADMIN")
                         .anyRequest().authenticated())
 
                 // cấu hình authentication

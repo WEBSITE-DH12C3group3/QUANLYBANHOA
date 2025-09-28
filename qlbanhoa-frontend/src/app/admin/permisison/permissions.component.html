@@ -1,0 +1,72 @@
+<div class="p-4">
+  <h2 class="text-xl font-bold mb-4">Permissions</h2>
+
+  <!-- Form thêm mới -->
+  <div *ngIf="!editPermission" class="mb-4 flex gap-2">
+    <input [(ngModel)]="newPermission.code"
+           type="text"
+           placeholder="Code"
+           class="border p-2 flex-1 rounded" />
+
+    <input [(ngModel)]="newPermission.description"
+           type="text"
+           placeholder="Description"
+           class="border p-2 flex-1 rounded" />
+
+    <button (click)="addPermission()"
+            class="bg-pink-600 text-white px-4 py-2 rounded">
+      Thêm Permission
+    </button>
+  </div>
+
+  <!-- Form cập nhật -->
+  <div *ngIf="editPermission" class="mb-4 flex gap-2">
+    <input [(ngModel)]="editPermission.code"
+           type="text"
+           placeholder="Code"
+           class="border p-2 flex-1 rounded" />
+
+    <input [(ngModel)]="editPermission.description"
+           type="text"
+           placeholder="Description"
+           class="border p-2 flex-1 rounded" />
+
+    <button (click)="updatePermission()"
+            class="bg-green-600 text-white px-4 py-2 rounded">
+      Cập nhật
+    </button>
+    <button (click)="editPermission = null"
+            class="bg-gray-500 text-white px-4 py-2 rounded">
+      Hủy
+    </button>
+  </div>
+
+  <!-- Bảng danh sách -->
+  <table class="w-full border">
+    <thead>
+      <tr class="bg-gray-100">
+        <th class="p-2 border">ID</th>
+        <th class="p-2 border">Code</th>
+        <th class="p-2 border">Description</th>
+        <th class="p-2 border">Hành động</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let p of permissions">
+        <td class="p-2 border">{{ p.id }}</td>
+        <td class="p-2 border">{{ p.code }}</td>
+        <td class="p-2 border">{{ p.description }}</td>
+        <td class="p-2 border text-center">
+          <button (click)="startEdit(p)"
+                  class="bg-blue-500 text-white px-3 py-1 rounded mr-2">
+            Sửa
+          </button>
+          <button (click)="deletePermission(p.id)"
+                  class="bg-red-500 text-white px-3 py-1 rounded">
+            Xóa
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
