@@ -10,9 +10,84 @@
     </div>
   </div>
 
-  <!-- Filters (giữ nguyên phần bạn đã có, rút gọn ở đây để tập trung phần bảng) -->
+  <!-- ✅ Bộ lọc nhỏ gọn hơn một chút -->
+<div class="rounded-xl border border-slate-700 p-2.5 bg-slate-800/40 space-y-2">
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-2">
+    <!-- Tìm kiếm -->
+    <div>
+      <label class="block text-xs text-slate-300 mb-0.5">Tìm kiếm</label>
+      <input [(ngModel)]="q" (keyup.enter)="page=0; fetch()"
+             type="text" placeholder="Tên, SKU..."
+             class="w-full px-2.5 py-1.5 rounded-lg bg-slate-900 border border-slate-700 text-sm focus:outline-none" />
+    </div>
 
-  <!-- Table -->
+    <!-- Trạng thái -->
+    <div>
+      <label class="block text-xs text-slate-300 mb-0.5">Trạng thái</label>
+      <select [(ngModel)]="active" (change)="page=0; fetch()"
+              class="w-full px-2.5 py-1.5 rounded-lg bg-slate-900 border border-slate-700 text-sm">
+        <option value="all">Tất cả</option>
+        <option value="true">Đang bán</option>
+        <option value="false">Đã ẩn</option>
+      </select>
+    </div>
+
+    <!-- Giá -->
+    <div>
+      <label class="block text-xs text-slate-300 mb-0.5">Giá từ</label>
+      <input type="number" [(ngModel)]="minPrice"
+             class="w-full px-2.5 py-1.5 rounded-lg bg-slate-900 border border-slate-700 text-sm" />
+    </div>
+
+    <div>
+      <label class="block text-xs text-slate-300 mb-0.5">Đến</label>
+      <input type="number" [(ngModel)]="maxPrice"
+             class="w-full px-2.5 py-1.5 rounded-lg bg-slate-900 border border-slate-700 text-sm" />
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-2">
+    <!-- Thuộc tính -->
+    <div>
+      <label class="block text-xs text-slate-300 mb-0.5">Thuộc tính</label>
+      <select [(ngModel)]="attrId"
+              class="w-full px-2.5 py-1.5 rounded-lg bg-slate-900 border border-slate-700 text-sm">
+        <option [ngValue]="null">-- Không lọc --</option>
+        <option *ngFor="let a of allAttributes" [ngValue]="a.id">
+          {{ a.name }} ({{ a.dataType }})
+        </option>
+      </select>
+    </div>
+
+    <!-- Sắp xếp -->
+    <div>
+      <label class="block text-xs text-slate-300 mb-0.5">Sắp xếp</label>
+      <select [(ngModel)]="sort" (change)="page=0; fetch()"
+              class="w-full px-2.5 py-1.5 rounded-lg bg-slate-900 border border-slate-700 text-sm">
+        <option value="createdAt,desc">Mới nhất</option>
+        <option value="price,asc">Giá ↑</option>
+        <option value="price,desc">Giá ↓</option>
+        <option value="name,asc">Tên A-Z</option>
+        <option value="name,desc">Tên Z-A</option>
+      </select>
+    </div>
+
+    <!-- Nút -->
+    <div class="col-span-2 flex items-end gap-2">
+      <button (click)="page=0; fetch()"
+              class="h-9 px-3 rounded-lg bg-pink-600 text-white hover:bg-pink-700 text-sm font-medium">
+        Lọc
+      </button>
+      <button (click)="q=''; active='all'; minPrice=undefined; maxPrice=undefined; attrId=null; page=0; sort='createdAt,desc'; fetch()"
+              class="h-9 px-3 rounded-lg bg-slate-700 hover:bg-slate-600 text-white text-sm font-medium">
+        Reset
+      </button>
+    </div>
+  </div>
+</div>
+
+
+  <!-- ✅ Table -->
   <div class="overflow-x-auto">
     <table class="min-w-full text-sm">
       <thead class="bg-slate-800/60 text-slate-300">
@@ -29,10 +104,9 @@
         <tr *ngFor="let p of data?.content">
           <td class="p-2">
             <img [src]="toImg(p.thumbnailUrl || p.imageUrl)"
-     class="h-12 w-12 object-cover rounded"
-     *ngIf="(p.thumbnailUrl || p.imageUrl); else noimg">
-<ng-template #noimg><div class="h-12 w-12 rounded bg-slate-800/50"></div></ng-template>
-
+                 class="h-12 w-12 object-cover rounded"
+                 *ngIf="(p.thumbnailUrl || p.imageUrl); else noimg">
+            <ng-template #noimg><div class="h-12 w-12 rounded bg-slate-800/50"></div></ng-template>
           </td>
           <td class="p-2 font-mono">{{ p.sku }}</td>
           <td class="p-2">
@@ -43,7 +117,9 @@
           <td class="p-2 text-center">
             <label class="inline-flex items-center gap-2 cursor-pointer">
               <input type="checkbox" [checked]="p.isActive" (change)="toggle(p)" />
-              <span [class]="p.isActive ? 'text-emerald-400' : 'text-slate-400'">{{ p.isActive ? 'Đang bán' : 'Đã ẩn' }}</span>
+              <span [class]="p.isActive ? 'text-emerald-400' : 'text-slate-400'">
+                {{ p.isActive ? 'Đang bán' : 'Đã ẩn' }}
+              </span>
             </label>
           </td>
           <td class="p-2 text-center space-x-2">
@@ -56,6 +132,4 @@
       </tbody>
     </table>
   </div>
-
-  <!-- Pagination giữ nguyên -->
 </div>
