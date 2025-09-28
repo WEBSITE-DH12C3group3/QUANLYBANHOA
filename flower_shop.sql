@@ -3,18 +3,14 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Sep 24, 2025 at 08:29 PM
+-- Generation Time: Sep 29, 2025 at 12:27 AM
 -- Server version: 10.4.32-MariaDB
--- PHP Version: 8.2.12
+-- PHP Version: 8.0.30
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
 SET time_zone = "+00:00";
 
-{
-  "email": "admin@banhoa.local",
-  "passwordHash": "123456"
-}
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -34,7 +30,7 @@ SET time_zone = "+00:00";
 CREATE TABLE `attributes` (
   `id` int(11) NOT NULL,
   `name` varchar(100) NOT NULL,
-  `data_type` enum('text','number','boolean','date') NOT NULL DEFAULT 'text'
+  `data_type` enum('BOOLEAN','DATE','NUMBER','TEXT') NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
@@ -42,9 +38,9 @@ CREATE TABLE `attributes` (
 --
 
 INSERT INTO `attributes` (`id`, `name`, `data_type`) VALUES
-(1, 'Color', 'text'),
-(2, 'StemLength', 'number'),
-(3, 'Scent', 'text');
+(1, 'Màu', 'TEXT'),
+(2, 'Độ Dài', 'NUMBER'),
+(3, 'Hương Thơm', 'TEXT');
 
 -- --------------------------------------------------------
 
@@ -83,6 +79,32 @@ CREATE TABLE `customers` (
   `loyalty_point` int(11) NOT NULL DEFAULT 0,
   `note` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `flyway_schema_history`
+--
+
+CREATE TABLE `flyway_schema_history` (
+  `installed_rank` int(11) NOT NULL,
+  `version` varchar(50) DEFAULT NULL,
+  `description` varchar(200) NOT NULL,
+  `type` varchar(20) NOT NULL,
+  `script` varchar(1000) NOT NULL,
+  `checksum` int(11) DEFAULT NULL,
+  `installed_by` varchar(100) NOT NULL,
+  `installed_on` timestamp NOT NULL DEFAULT current_timestamp(),
+  `execution_time` int(11) NOT NULL,
+  `success` tinyint(1) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `flyway_schema_history`
+--
+
+INSERT INTO `flyway_schema_history` (`installed_rank`, `version`, `description`, `type`, `script`, `checksum`, `installed_by`, `installed_on`, `execution_time`, `success`) VALUES
+(1, '1', '<< Flyway Baseline >>', 'BASELINE', '<< Flyway Baseline >>', NULL, 'root', '2025-09-25 13:32:02', 0, 1);
 
 -- --------------------------------------------------------
 
@@ -154,7 +176,7 @@ CREATE TABLE `payments` (
 
 CREATE TABLE `permissions` (
   `id` int(11) NOT NULL,
-  `code` varchar(100) NOT NULL,
+  `code` varchar(255) DEFAULT NULL,
   `description` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -163,10 +185,13 @@ CREATE TABLE `permissions` (
 --
 
 INSERT INTO `permissions` (`id`, `code`, `description`) VALUES
-(1, 'product.read', 'Read products'),
-(2, 'product.write', 'Create/Update products'),
-(3, 'order.read', 'Read orders'),
-(4, 'order.write', 'Create/Update orders');
+(1, 'product.read', 'Xem sản phẩm'),
+(2, 'product.write', 'Thêm/Sửa/Xoá sản phẩm'),
+(3, 'order.read', 'Xem đơn hàng'),
+(4, 'order.write', 'Xử lý đơn hàng'),
+(5, 'user.read', 'Xem người dùng'),
+(6, 'user.write', 'Quản lý người dùng'),
+(8, '1', '1');
 
 -- --------------------------------------------------------
 
@@ -199,8 +224,10 @@ CREATE TABLE `products` (
 --
 
 INSERT INTO `products` (`id`, `sku`, `name`, `slug`, `category_id`, `unit`, `price`, `sale_price`, `cost_price`, `image_url`, `thumbnail_url`, `short_desc`, `description`, `weight_kg`, `is_active`, `created_at`, `updated_at`) VALUES
-(1, 'ROSE-RED-BO10', 'Bó hồng đỏ 10 bông', 'bo-hong-do-10', 1, 'bó', 350000.00, NULL, 220000.00, '/uploads/rose-red-10.jpg', NULL, 'Hồng đỏ nhập, giấy gói kraft.', NULL, NULL, 1, '2025-09-25 01:26:55', '2025-09-25 01:26:55'),
-(2, 'ORCHID-POT-WHITE', 'Lan hồ điệp trắng (chậu)', 'lan-ho-diep-trang-chau', 2, 'chậu', 950000.00, NULL, 650000.00, '/uploads/orchid-white-pot.jpg', NULL, 'Lan hồ điệp 2 cành.', NULL, NULL, 1, '2025-09-25 01:26:55', '2025-09-25 01:26:55');
+(1, 'ROSE-RED-BO10', 'Bó hồng đỏ 10 bông', 'bo-hong-do-10', 1, 'bó', 350000.00, NULL, 220000.00, '/uploads/20250929043347299.jpg', NULL, 'Hồng đỏ nhập, giấy gói kraft.', NULL, NULL, 1, '2025-09-25 01:26:55', '2025-09-29 04:33:48'),
+(2, 'ORCHID-POT-WHITE', 'Lan hồ điệp trắng (chậu)', 'lan-ho-diep-trang-chau', 2, 'chậu', 950000.00, NULL, 650000.00, '/uploads/20250929020311121.jpg', NULL, 'Lan hồ điệp 2 cành.', NULL, NULL, 1, '2025-09-25 01:26:55', '2025-09-29 02:03:12'),
+(3, 'ROSE-PINK-BO1233', 'Bó hồng phấn 12 bông', 'bo-hong-phan-12', 1, 'bó', 320000.00, 295000.00, 200000.00, '/uploads/20250929020303274.jpg', NULL, 'Hồng phấn nhập', 'Giấy kraft, nơ lụa', 0.500, 1, '2025-09-29 00:40:51', '2025-09-29 04:28:34'),
+(4, 'cức', 'hoa hòe', 'cc-124', 2, '22', 200000.00, 100000.00, 20000.00, '/uploads/20250929020254745.jpg', NULL, NULL, NULL, NULL, 1, '2025-09-29 01:08:04', '2025-09-29 04:40:35');
 
 -- --------------------------------------------------------
 
@@ -215,14 +242,19 @@ CREATE TABLE `product_attribute` (
   `value_num` decimal(18,6) DEFAULT NULL,
   `value_bool` tinyint(1) DEFAULT NULL,
   `value_date` date DEFAULT NULL
-) ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `product_attribute`
 --
 
 INSERT INTO `product_attribute` (`product_id`, `attribute_id`, `value_text`, `value_num`, `value_bool`, `value_date`) VALUES
-(1, 1, 'Red', NULL, NULL, NULL);
+(1, 1, 'Red', NULL, NULL, NULL),
+(3, 1, '555', NULL, NULL, NULL),
+(3, 2, NULL, 45.000000, NULL, NULL),
+(3, 3, 'Light', NULL, NULL, NULL),
+(4, 2, NULL, -4.000000, NULL, NULL),
+(4, 3, 'HEHE', NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -268,7 +300,7 @@ CREATE TABLE `purchase_order_items` (
 
 CREATE TABLE `roles` (
   `id` int(11) NOT NULL,
-  `name` varchar(50) NOT NULL,
+  `name` varchar(255) DEFAULT NULL,
   `description` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -277,9 +309,10 @@ CREATE TABLE `roles` (
 --
 
 INSERT INTO `roles` (`id`, `name`, `description`) VALUES
-(1, 'admin', 'Full access'),
-(2, 'staff', 'Store staff'),
-(3, 'customer', 'Customer');
+(1, 'admin', 'Quản trị hệ thống'),
+(2, 'staff', 'Nhân viên quản lý'),
+(3, 'customer', 'Khách hàng'),
+(5, '1', NULL);
 
 -- --------------------------------------------------------
 
@@ -300,7 +333,15 @@ INSERT INTO `role_permissions` (`role_id`, `permission_id`) VALUES
 (1, 1),
 (1, 2),
 (1, 3),
-(1, 4);
+(1, 4),
+(1, 5),
+(1, 6),
+(2, 1),
+(2, 3),
+(2, 4),
+(3, 2),
+(3, 3),
+(5, 8);
 
 -- --------------------------------------------------------
 
@@ -328,9 +369,9 @@ CREATE TABLE `suppliers` (
 
 CREATE TABLE `users` (
   `id` int(11) NOT NULL,
-  `email` varchar(120) NOT NULL,
-  `phone` varchar(20) DEFAULT NULL,
-  `full_name` varchar(120) NOT NULL,
+  `email` varchar(255) DEFAULT NULL,
+  `phone` varchar(255) DEFAULT NULL,
+  `full_name` varchar(255) DEFAULT NULL,
   `password_hash` varchar(255) NOT NULL,
   `shift_label` varchar(50) DEFAULT NULL,
   `status` enum('active','inactive','banned') NOT NULL DEFAULT 'active',
@@ -344,7 +385,10 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `email`, `phone`, `full_name`, `password_hash`, `shift_label`, `status`, `last_login_at`, `created_at`, `updated_at`) VALUES
-(1, 'admin@flowershop.local', '0900000000', 'Admin', '{bcrypt_hash_here}', 'A', 'active', NULL, '2025-09-25 01:26:55', '2025-09-25 01:26:55');
+(3, 'admin1@example.com', '0909999999', 'Admin 1', '$2a$10$SEW4o.ZT6YzVP0CTC30h0ulvEMojGs1fMX8/iI2pZTJOzfOur1zw.', NULL, 'active', NULL, '2025-09-25 20:54:24', '2025-09-25 20:54:24'),
+(13, 'user1@example.com', '0988777666', 'Nguyen Van B', '$2a$10$Wst4Qk45v3Oecy1qUqpwYexes7PahGPP3SIL9L/3vieoObU46NArG', NULL, 'inactive', NULL, '2025-09-28 16:53:32', '2025-09-28 16:54:07'),
+(14, '11@gmail.com', '09871527481', '11', '$2a$10$um9w0Da1y1fGoc7m5QCpqOGr14b2ZJVqdwEzcu00liTt6KcLndE5W', NULL, 'active', NULL, '2025-09-28 16:56:12', '2025-09-28 16:56:12'),
+(15, 'anhha19052004@gmail.com', '00111111', 'hà', '$2a$10$073kFFCELUwPqNYIHLejMuNcZlIH10yb7qIb5Yt6japhusfpMr0K6', NULL, 'active', NULL, '2025-09-29 00:15:47', '2025-09-29 00:15:47');
 
 -- --------------------------------------------------------
 
@@ -362,7 +406,10 @@ CREATE TABLE `user_roles` (
 --
 
 INSERT INTO `user_roles` (`user_id`, `role_id`) VALUES
-(1, 1);
+(3, 1),
+(13, 3),
+(14, 5),
+(15, 1);
 
 -- --------------------------------------------------------
 
@@ -395,7 +442,8 @@ CREATE TABLE `vouchers` (
 --
 ALTER TABLE `attributes`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `name` (`name`);
+  ADD UNIQUE KEY `name` (`name`),
+  ADD UNIQUE KEY `uk_attr_name` (`name`);
 
 --
 -- Indexes for table `categories`
@@ -411,6 +459,13 @@ ALTER TABLE `categories`
 ALTER TABLE `customers`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `user_id` (`user_id`);
+
+--
+-- Indexes for table `flyway_schema_history`
+--
+ALTER TABLE `flyway_schema_history`
+  ADD PRIMARY KEY (`installed_rank`),
+  ADD KEY `flyway_schema_history_s_idx` (`success`);
 
 --
 -- Indexes for table `orders`
@@ -566,13 +621,13 @@ ALTER TABLE `payments`
 -- AUTO_INCREMENT for table `permissions`
 --
 ALTER TABLE `permissions`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `products`
 --
 ALTER TABLE `products`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `purchase_orders`
@@ -590,7 +645,7 @@ ALTER TABLE `purchase_order_items`
 -- AUTO_INCREMENT for table `roles`
 --
 ALTER TABLE `roles`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `suppliers`
@@ -602,7 +657,7 @@ ALTER TABLE `suppliers`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT for table `vouchers`

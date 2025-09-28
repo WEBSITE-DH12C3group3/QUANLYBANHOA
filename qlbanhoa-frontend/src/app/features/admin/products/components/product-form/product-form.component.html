@@ -1,0 +1,134 @@
+<div class="p-4 space-y-4 max-w-5xl">
+  <div class="flex items-center justify-between">
+    <h1 class="text-xl font-semibold">{{ title }}</h1>
+    <div class="space-x-2">
+      <a routerLink="/admin/products" class="px-3 py-2 rounded-xl bg-slate-700 text-white hover:bg-slate-600">Quay lại</a>
+      <button *ngIf="id" (click)="deleteHard()" class="px-3 py-2 rounded-xl bg-rose-700 text-white hover:bg-rose-600">Xóa</button>
+    </div>
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="save()" class="grid md:grid-cols-2 gap-4">
+    <div class="space-y-3">
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="text-sm text-slate-300">SKU *</label>
+          <input formControlName="sku" class="w-full px-3 py-2 rounded bg-slate-800/50 ring-1 ring-slate-700" />
+        </div>
+        <div>
+          <label class="text-sm text-slate-300">Slug *</label>
+          <input formControlName="slug" class="w-full px-3 py-2 rounded bg-slate-800/50 ring-1 ring-slate-700" />
+        </div>
+      </div>
+
+      <div>
+        <label class="text-sm text-slate-300">Tên *</label>
+        <input formControlName="name" class="w-full px-3 py-2 rounded bg-slate-800/50 ring-1 ring-slate-700" />
+      </div>
+
+      <div class="grid grid-cols-3 gap-3">
+        <div>
+          <label class="text-sm text-slate-300">Giá *</label>
+          <input type="number" formControlName="price" class="w-full px-3 py-2 rounded bg-slate-800/50 ring-1 ring-slate-700" />
+        </div>
+        <div>
+          <label class="text-sm text-slate-300">Giá sale</label>
+          <input type="number" formControlName="salePrice" class="w-full px-3 py-2 rounded bg-slate-800/50 ring-1 ring-slate-700" />
+        </div>
+        <div>
+          <label class="text-sm text-slate-300">Giá nhập</label>
+          <input type="number" formControlName="costPrice" class="w-full px-3 py-2 rounded bg-slate-800/50 ring-1 ring-slate-700" />
+        </div>
+      </div>
+
+      <div class="grid grid-cols-3 gap-3">
+        <div>
+          <label class="text-sm text-slate-300">Danh mục</label>
+          <select formControlName="categoryId" class="w-full px-3 py-2 rounded bg-slate-800/50 ring-1 ring-slate-700">
+            <option [ngValue]="null">-- chọn danh mục --</option>
+            <option *ngFor="let c of categories" [ngValue]="c.id">{{ c.name }}</option>
+          </select>
+        </div>
+        <div>
+          <label class="text-sm text-slate-300">Đơn vị</label>
+          <input formControlName="unit" class="w-full px-3 py-2 rounded bg-slate-800/50 ring-1 ring-slate-700" />
+        </div>
+        <div class="flex items-center gap-2">
+          <input type="checkbox" formControlName="isActive" class="size-4" />
+          <label class="text-sm text-slate-300">Đang bán</label>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="text-sm text-slate-300">Ảnh</label>
+          <div class="flex items-center gap-2">
+            <input formControlName="imageUrl" placeholder="/uploads/xxx.jpg"
+                   class="w-full px-3 py-2 rounded bg-slate-800/50 ring-1 ring-slate-700" />
+            <label class="px-3 py-2 rounded bg-slate-700 text-white hover:bg-slate-600 cursor-pointer">
+              Chọn...
+              <input type="file" (change)="onPickImage($event)" accept="image/*" class="hidden" />
+            </label>
+          </div>
+          <img *ngIf="form.value.imageUrl"
+     [src]="toImg(form.value.imageUrl)"
+     class="mt-2 rounded-lg max-h-40 object-cover" />
+        </div>
+        <div>
+          <label class="text-sm text-slate-300">Thumbnail</label>
+          <input formControlName="thumbnailUrl" class="w-full px-3 py-2 rounded bg-slate-800/50 ring-1 ring-slate-700" />
+        </div>
+      </div>
+
+      <div>
+        <label class="text-sm text-slate-300">Mô tả ngắn</label>
+        <input formControlName="shortDesc" class="w-full px-3 py-2 rounded bg-slate-800/50 ring-1 ring-slate-700" />
+      </div>
+
+      <div>
+        <label class="text-sm text-slate-300">Mô tả</label>
+        <textarea formControlName="description" rows="5" class="w-full px-3 py-2 rounded bg-slate-800/50 ring-1 ring-slate-700"></textarea>
+      </div>
+    </div>
+
+    <!-- Right column: Attributes -->
+    <div class="space-y-3">
+      <div class="flex items-center justify-between">
+        <div class="text-sm font-semibold">Thuộc tính</div>
+        <button type="button" (click)="addAttrRow()" class="px-2 py-1 rounded bg-slate-700 hover:bg-slate-600">+ Thêm</button>
+      </div>
+
+      <div class="space-y-2" formArrayName="attributes">
+        <div *ngFor="let g of attrs.controls; let i = index" [formGroupName]="i" class="p-3 rounded-xl bg-slate-800/40 ring-1 ring-slate-700">
+          <div class="grid grid-cols-3 gap-2 items-center">
+            <select formControlName="attributeId" (change)="onAttrChange(i)"
+                    class="px-3 py-2 rounded bg-slate-900 ring-1 ring-slate-700">
+              <option [ngValue]="null">-- chọn thuộc tính --</option>
+              <option *ngFor="let a of allAttributes" [ngValue]="a.id">{{ a.name }} ({{ a.dataType }})</option>
+            </select>
+
+            <ng-container [ngSwitch]="dataTypeOf(g.value.attributeId)">
+              <input *ngSwitchCase="'TEXT'" type="text" formControlName="valueText" placeholder="Giá trị (text)"
+                     class="px-3 py-2 rounded bg-slate-900 ring-1 ring-slate-700" />
+              <input *ngSwitchCase="'NUMBER'" type="number" formControlName="valueNum" placeholder="Giá trị (number)"
+                     class="px-3 py-2 rounded bg-slate-900 ring-1 ring-slate-700" />
+              <select *ngSwitchCase="'BOOLEAN'" formControlName="valueBool"
+                      class="px-3 py-2 rounded bg-slate-900 ring-1 ring-slate-700">
+                <option [ngValue]="true">true</option>
+                <option [ngValue]="false">false</option>
+              </select>
+              <input *ngSwitchCase="'DATE'" type="date" formControlName="valueDate"
+                     class="px-3 py-2 rounded bg-slate-900 ring-1 ring-slate-700" />
+              <div *ngSwitchDefault class="text-slate-400">Chọn thuộc tính để nhập giá trị</div>
+            </ng-container>
+
+            <button type="button" (click)="removeAttrRow(i)" class="px-2 py-1 rounded bg-rose-700 hover:bg-rose-600">Xoá</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="pt-3">
+        <button type="submit" class="px-3 py-2 rounded-xl bg-pink-600 text-white hover:bg-pink-700">Lưu</button>
+      </div>
+    </div>
+  </form>
+</div>

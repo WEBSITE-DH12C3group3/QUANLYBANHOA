@@ -1,0 +1,61 @@
+<div class="p-4 space-y-4">
+  <div class="flex items-center justify-between gap-3">
+    <h1 class="text-xl font-semibold">Sản phẩm</h1>
+    <div class="space-x-2">
+      <button (click)="exportCsv()" class="px-3 py-2 rounded-xl bg-slate-700 text-white hover:bg-slate-600">Export CSV</button>
+      <button (click)="newProduct()"
+              class="px-3 py-2 rounded-xl bg-pink-600 text-white hover:bg-pink-700 shadow">
+        + Thêm sản phẩm
+      </button>
+    </div>
+  </div>
+
+  <!-- Filters (giữ nguyên phần bạn đã có, rút gọn ở đây để tập trung phần bảng) -->
+
+  <!-- Table -->
+  <div class="overflow-x-auto">
+    <table class="min-w-full text-sm">
+      <thead class="bg-slate-800/60 text-slate-300">
+        <tr>
+          <th class="text-left p-2">Ảnh</th>
+          <th class="text-left p-2">SKU</th>
+          <th class="text-left p-2">Tên</th>
+          <th class="text-right p-2">Giá</th>
+          <th class="text-center p-2">Trạng thái</th>
+          <th class="text-center p-2 w-[18rem]">Thao tác</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-slate-800/60">
+        <tr *ngFor="let p of data?.content">
+          <td class="p-2">
+            <img [src]="toImg(p.thumbnailUrl || p.imageUrl)"
+     class="h-12 w-12 object-cover rounded"
+     *ngIf="(p.thumbnailUrl || p.imageUrl); else noimg">
+<ng-template #noimg><div class="h-12 w-12 rounded bg-slate-800/50"></div></ng-template>
+
+          </td>
+          <td class="p-2 font-mono">{{ p.sku }}</td>
+          <td class="p-2">
+            <div class="font-medium">{{ p.name }}</div>
+            <div class="text-xs text-slate-400">{{ p.slug }}</div>
+          </td>
+          <td class="p-2 text-right">{{ p.price | number }}</td>
+          <td class="p-2 text-center">
+            <label class="inline-flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" [checked]="p.isActive" (change)="toggle(p)" />
+              <span [class]="p.isActive ? 'text-emerald-400' : 'text-slate-400'">{{ p.isActive ? 'Đang bán' : 'Đã ẩn' }}</span>
+            </label>
+          </td>
+          <td class="p-2 text-center space-x-2">
+            <button (click)="edit(p)" class="px-2 py-1 rounded bg-slate-700 hover:bg-slate-600">Sửa</button>
+            <button (click)="clone(p)" class="px-2 py-1 rounded bg-indigo-700 hover:bg-indigo-600">Nhân bản</button>
+            <button (click)="remove(p)" class="px-2 py-1 rounded bg-amber-700 hover:bg-amber-600">Ẩn</button>
+            <button (click)="deleteHard(p)" class="px-2 py-1 rounded bg-rose-700 hover:bg-rose-600">Xóa</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pagination giữ nguyên -->
+</div>

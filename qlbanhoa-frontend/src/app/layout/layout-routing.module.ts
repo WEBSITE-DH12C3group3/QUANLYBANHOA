@@ -12,7 +12,22 @@ const routes: Routes = [
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       { path: 'dashboard', component: FeaturePlaceholderComponent, data: { title: 'Dashboard' } },
-      { path: 'products', component: FeaturePlaceholderComponent, data: { title: 'Products' } },
+      { path: 'products',
+      loadComponent: () => import('../features/admin/products/components/product-list/product-list.component')
+                        .then(m => m.ProductListComponent),
+      data: { title: 'Products' }
+      },
+      { path: 'products/new',
+      loadComponent: () => import('../features/admin/products/components/product-form/product-form.component')
+                        .then(m => m.ProductFormComponent),
+      data: { title: 'Create Product' }
+      },
+      { path: 'products/:id/edit',
+      loadComponent: () => import('../features/admin/products/components/product-form/product-form.component')
+                        .then(m => m.ProductFormComponent),
+      data: { title: 'Edit Product' }
+      },
+
       { path: 'orders', component: FeaturePlaceholderComponent, data: { title: 'Orders' } },
       { path: 'customers', component: FeaturePlaceholderComponent, data: { title: 'Customers' } },
       { path: 'suppliers', component: FeaturePlaceholderComponent, data: { title: 'Suppliers' } },
