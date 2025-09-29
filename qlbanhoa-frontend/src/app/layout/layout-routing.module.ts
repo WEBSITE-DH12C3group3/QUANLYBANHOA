@@ -45,12 +45,35 @@ const routes: Routes = [
       .then(m => m.CategoryFormComponent),
       data: { title: 'Edit Category' }
       },
+      { path: 'purchase-orders',
+      loadComponent: () => import('../features/admin/purchase/components/po-list/po-list.component').then(m => m.PoListComponent),
+      data: { title: 'Purchase Orders' }
+      },
+      { path: 'purchase-orders/new',
+      loadComponent: () => import('../features/admin/purchase/components/po-form/po-form.component').then(m => m.PoFormComponent),
+      data: { title: 'New Purchase Order' }
+      },
+      { path: 'purchase-orders/:id',
+      loadComponent: () => import('../features/admin/purchase/components/po-form/po-form.component').then(m => m.PoFormComponent),
+      data: { title: 'Purchase Order Detail' }
+      },
 
 
       { path: 'orders', component: FeaturePlaceholderComponent, data: { title: 'Orders' } },
       { path: 'customers', component: FeaturePlaceholderComponent, data: { title: 'Customers' } },
-      { path: 'suppliers', component: FeaturePlaceholderComponent, data: { title: 'Suppliers' } },
-      { path: 'purchase-orders', component: FeaturePlaceholderComponent, data: { title: 'Purchase Orders' } },
+      { path: 'suppliers',
+      loadComponent: () => import('../features/admin/suppliers/components/supplier-list/supplier-list.component').then(m => m.SupplierListComponent),
+      data: { title: 'Suppliers' }
+      },
+      { path: 'suppliers/new',
+      loadComponent: () => import('../features/admin/suppliers/components/supplier-form/supplier-form.component').then(m => m.SupplierFormComponent),
+      data: { title: 'New Supplier' }
+      },
+      { path: 'suppliers/:id',
+      loadComponent: () => import('../features/admin/suppliers/components/supplier-form/supplier-form.component').then(m => m.SupplierFormComponent),
+      data: { title: 'Edit Supplier' }
+      },
+
       { path: 'inventory', component: FeaturePlaceholderComponent, data: { title: 'Inventory' } },
       { path: 'reports', component: FeaturePlaceholderComponent, data: { title: 'Reports & Analytics' } },
       { path: 'promotions', component: FeaturePlaceholderComponent, data: { title: 'Promotions' } },
