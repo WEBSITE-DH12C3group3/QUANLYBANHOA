@@ -1,0 +1,24 @@
+<div class="p-6 space-y-6">
+  <h3 class="text-lg font-semibold text-pink-400">
+    {{ isEdit ? '✏️ Sửa Permission' : '➕ Thêm Permission' }}
+  </h3>
+
+  <div class="grid grid-cols-2 gap-4">
+    <input [(ngModel)]="permission.code" placeholder="Code"
+           class="bg-slate-700 text-white px-3 py-2 rounded-lg w-full" />
+
+    <input [(ngModel)]="permission.description" placeholder="Description"
+           class="col-span-2 bg-slate-700 text-white px-3 py-2 rounded-lg w-full" />
+  </div>
+
+  <div class="flex gap-3">
+    <button (click)="savePermission()"
+            class="bg-gradient-to-r from-green-400 to-emerald-500 px-4 py-2 rounded-lg text-slate-900 font-semibold">
+      Lưu
+    </button>
+    <button routerLink="/admin/permissions"
+            class="bg-slate-600 px-4 py-2 rounded-lg text-white">
+      Quay lại
+    </button>
+  </div>
+</div>

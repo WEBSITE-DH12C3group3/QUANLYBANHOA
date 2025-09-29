@@ -1,0 +1,71 @@
+<div class="p-6 space-y-6">
+
+  <!-- Bộ lọc -->
+  <div class="p-6 rounded-2xl bg-slate-800 shadow-lg">
+    <h3 class="text-lg font-semibold mb-4 text-pink-400">🔍 Tìm kiếm</h3>
+    <div class="grid grid-cols-3 gap-4">
+      <input [(ngModel)]="search.keyword" placeholder="Từ khóa (tên / email / phone)"
+             class="col-span-2 bg-slate-700 text-white px-3 py-2 rounded-lg w-full" />
+      <button (click)="loadUsers()"
+              class="bg-gradient-to-r from-indigo-500 to-purple-500 px-4 py-2 rounded-lg text-white font-semibold">
+        Lọc
+      </button>
+    </div>
+  </div>
+
+  <!-- Danh sách người dùng -->
+  <div class="p-6 rounded-2xl bg-slate-800 shadow-lg">
+    <div class="flex justify-between items-center mb-4">
+      <h3 class="text-lg font-semibold text-pink-400">📋 Danh sách Người dùng</h3>
+      <button routerLink="/admin/users/new"
+              class="bg-gradient-to-r from-pink-400 to-fuchsia-500 px-4 py-2 rounded-lg text-white font-semibold">
+        ➕ Thêm User
+      </button>
+    </div>
+
+    <table class="w-full text-sm text-left text-slate-300 border-collapse">
+      <thead class="bg-slate-700 text-slate-100">
+        <tr>
+          <th class="px-4 py-2">ID</th>
+          <th class="px-4 py-2">Họ tên</th>
+          <th class="px-4 py-2">Email</th>
+          <th class="px-4 py-2">Phone</th>
+          <th class="px-4 py-2">Roles</th>
+          <th class="px-4 py-2">Hành động</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let u of users" class="border-b border-slate-700 hover:bg-slate-700/40">
+          <td class="px-4 py-2">{{ u.id }}</td>
+          <td class="px-4 py-2">{{ u.fullName }}</td>
+          <td class="px-4 py-2">{{ u.email }}</td>
+          <td class="px-4 py-2">{{ u.phone }}</td>
+          <td class="px-4 py-2">
+            <span *ngFor="let r of u.roles"
+                  class="inline-block px-2 py-1 text-xs rounded-full bg-gradient-to-r from-pink-500 to-fuchsia-500 text-white mr-1">
+              {{ r.name }}
+            </span>
+          </td>
+          <td class="px-4 py-2 space-x-3">
+            <button class="text-blue-400 hover:underline" [routerLink]="'/admin/users/' + u.id">Sửa</button>
+            <button class="text-pink-500 hover:underline" (click)="deleteUser(u.id)">Xóa</button>
+          </td>
+        </tr>
+        <tr *ngIf="users.length === 0">
+          <td colspan="6" class="p-4 text-center text-slate-400">Không có dữ liệu</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Phân trang -->
+    <div class="flex items-center justify-between mt-4">
+      <div class="text-slate-400 text-sm">Trang {{ page }} / {{ totalPages }}</div>
+      <div class="space-x-2">
+        <button (click)="prevPage()" [disabled]="page === 1"
+                class="px-3 py-1 rounded-lg bg-slate-700 text-slate-200 disabled:opacity-50">« Trước</button>
+        <button (click)="nextPage()" [disabled]="page === totalPages"
+                class="px-3 py-1 rounded-lg bg-slate-700 text-slate-200 disabled:opacity-50">Sau »</button>
+      </div>
+    </div>
+  </div>
+</div>

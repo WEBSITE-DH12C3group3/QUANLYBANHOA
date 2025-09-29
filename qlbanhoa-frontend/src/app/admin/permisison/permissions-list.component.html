@@ -1,0 +1,61 @@
+<div class="p-6 space-y-6">
+  <!-- Bộ lọc -->
+  <div class="p-6 rounded-2xl bg-slate-800 shadow-lg">
+    <h3 class="text-lg font-semibold mb-4 text-pink-400">🔍 Tìm kiếm</h3>
+    <div class="grid grid-cols-3 gap-4">
+      <input [(ngModel)]="search.keyword" placeholder="Từ khóa (code / description)"
+             class="col-span-2 bg-slate-700 text-white px-3 py-2 rounded-lg w-full" />
+      <button (click)="loadPermissions()"
+              class="bg-gradient-to-r from-indigo-500 to-purple-500 px-4 py-2 rounded-lg text-white font-semibold">
+        Lọc
+      </button>
+    </div>
+  </div>
+
+  <!-- Danh sách permissions -->
+  <div class="p-6 rounded-2xl bg-slate-800 shadow-lg">
+    <div class="flex justify-between items-center mb-4">
+      <h3 class="text-lg font-semibold text-pink-400">📋 Danh sách Permissions</h3>
+      <button routerLink="/admin/permissions/new"
+              class="bg-gradient-to-r from-pink-400 to-fuchsia-500 px-4 py-2 rounded-lg text-white font-semibold">
+        ➕ Thêm Permission
+      </button>
+    </div>
+
+    <table class="w-full text-sm text-left text-slate-300 border-collapse">
+      <thead class="bg-slate-700 text-slate-100">
+        <tr>
+          <th class="px-4 py-2">ID</th>
+          <th class="px-4 py-2">Code</th>
+          <th class="px-4 py-2">Description</th>
+          <th class="px-4 py-2">Hành động</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let p of permissions" class="border-b border-slate-700 hover:bg-slate-700/40">
+          <td class="px-4 py-2">{{ p.id }}</td>
+          <td class="px-4 py-2">{{ p.code }}</td>
+          <td class="px-4 py-2">{{ p.description }}</td>
+          <td class="px-4 py-2 space-x-3">
+            <button class="text-blue-400 hover:underline" [routerLink]="'/admin/permissions/' + p.id">Sửa</button>
+            <button class="text-pink-500 hover:underline" (click)="deletePermission(p.id)">Xóa</button>
+          </td>
+        </tr>
+        <tr *ngIf="permissions.length === 0">
+          <td colspan="4" class="p-4 text-center text-slate-400">Không có dữ liệu</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Phân trang -->
+    <div class="flex items-center justify-between mt-4">
+      <div class="text-slate-400 text-sm">Trang {{ page }} / {{ totalPages }}</div>
+      <div class="space-x-2">
+        <button (click)="prevPage()" [disabled]="page === 1"
+                class="px-3 py-1 rounded-lg bg-slate-700 text-slate-200 disabled:opacity-50">« Trước</button>
+        <button (click)="nextPage()" [disabled]="page === totalPages"
+                class="px-3 py-1 rounded-lg bg-slate-700 text-slate-200 disabled:opacity-50">Sau »</button>
+      </div>
+    </div>
+  </div>
+</div>

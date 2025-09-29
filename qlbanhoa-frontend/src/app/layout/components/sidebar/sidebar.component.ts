@@ -7,7 +7,7 @@ interface NavItem {
   label: string;
   path: string;
   badge?: string;
-  permission?: string; // ✅ thêm thuộc tính permission
+  permission?: string; // ✅ quyền cần thiết để hiển thị menu
 }
 
 @Component({
@@ -17,49 +17,46 @@ interface NavItem {
   templateUrl: './sidebar.component.html'
 })
 export class SidebarComponent implements OnInit {
-  constructor(public auth: AuthService,private router: Router) { }
+  constructor(public auth: AuthService, private router: Router) {}
 
   // Danh sách menu + quyền tương ứng
-  nav: NavItem[] = [
-    { label: 'Dashboard', path: '/admin/dashboard' }, // không cần quyền
-    { label: 'Products', path: '/admin/products', permission: 'product.read' },
-    { label: 'Categories', path: '/admin/categories', permission: 'category.read' },
-    { label: 'Orders', path: '/admin/orders', badge: '12', permission: 'order.read' },
-    { label: 'Customers', path: '/admin/customers', permission: 'customer.read' },
-    { label: 'Suppliers', path: '/admin/suppliers', permission: 'supplier.read' },
-    { label: 'Purchase Orders', path: '/admin/purchase-orders', permission: 'purchase.read' },
-    { label: 'Inventory', path: '/admin/inventory', permission: 'inventory.read' },
-    { label: 'Reports & Analytics', path: '/admin/reports', permission: 'report.read' },
-    { label: 'Promotions', path: '/admin/promotions', permission: 'promotion.read' },
-    { label: 'Shipping', path: '/admin/shipping', permission: 'shipping.read' },
-    { label: 'Payments', path: '/admin/payments', permission: 'payment.read' },
-    { label: 'Users', path: '/admin/users', permission: 'user.read' },
-    { label: 'Roles', path: '/admin/roles', permission: 'role.read' },
-    { label: 'Permissions', path: '/admin/permissions', permission: 'permission.read' },
-    { label: 'Settings', path: '/admin/settings', permission: 'setting.read' }
-  ];
+nav: NavItem[] = [
+  { label: 'Dashboard', path: '/admin/dashboard' },
+  { label: 'Products', path: '/admin/products', permission: 'product' },
+  { label: 'Categories', path: '/admin/categories', permission: 'category' },
+  { label: 'Orders', path: '/admin/orders', permission: 'order' },
+  { label: 'Customers', path: '/admin/customers', permission: 'user' },
+  { label: 'Suppliers', path: '/admin/suppliers', permission: 'supplier' },
+  { label: 'Purchase Orders', path: '/admin/purchase-orders', permission: 'purchase' },
+  { label: 'Reports & Analytics', path: '/admin/reports', permission: 'report' },
+  { label: 'Promotions', path: '/admin/promotions', permission: 'promotion' },
+  { label: 'Shipping', path: '/admin/shipping', permission: 'shipping' },
+  { label: 'Users', path: '/admin/users', permission: 'user' },
+  { label: 'Roles', path: '/admin/roles', permission: 'user' },
+  { label: 'Permissions', path: '/admin/permissions', permission: 'user' },
+  { label: 'Settings', path: '/admin/settings', permission: 'setting' }
+];
+
+
+  userPermissions: string[] = [];
 
   ngOnInit() {
     if (this.auth.isLoggedIn()) {
-      this.auth.loadProfile().subscribe();
-      console.log('Nav:', this.nav);
-      console.log('User profile:', this.auth.getProfile());
+      this.auth.loadProfile().subscribe(profile => {
+        this.userPermissions = profile?.permissions || [];
+        console.log('✅ User permissions:', this.userPermissions);
+      });
     }
   }
 
-  canAccess(item: any): boolean {
-    const user = this.auth.getProfile();  // lấy profile từ AuthService
-    if (!user) return false;
-
-    // nếu không cấu hình roles thì cho phép luôn
-    if (!item.roles || item.roles.length === 0) return true;
-
-    // kiểm tra user.roles có giao với item.roles
-    return user.roles.some((r: string) => item.roles.includes(r));
+  // ✅ kiểm tra quyền
+  canAccess(item: NavItem): boolean {
+    if (!item.permission) return true; // menu không cần quyền
+    return this.userPermissions.includes(item.permission);
   }
-logout() {
+
+  logout() {
     this.auth.logout();
     this.router.navigate(['/login']);
   }
-
 }

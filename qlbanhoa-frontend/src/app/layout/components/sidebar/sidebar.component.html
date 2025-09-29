@@ -20,42 +20,46 @@
   <!-- Nav -->
   <nav class="px-3 py-3 space-y-1">
     <ng-container *ngFor="let item of nav">
-      <a *ngIf="canAccess(item)" [routerLink]="item.path" routerLinkActive="!text-slate-900" class="group flex items-center gap-3 px-3 py-2 rounded-xl text-slate-200 hover:text-slate-900
-            hover:bg-gradient-to-r hover:from-pink-400 hover:to-fuchsia-400 transition">
+      <a *ngIf="canAccess(item)" 
+         [routerLink]="item.path" 
+         routerLinkActive="!text-slate-900"
+         class="group flex items-center gap-3 px-3 py-2 rounded-xl text-slate-200 
+                hover:text-slate-900 hover:bg-gradient-to-r hover:from-pink-400 hover:to-fuchsia-400 transition">
+        
+        <!-- Icon placeholder (bạn có thể thay bằng icon riêng cho từng item) -->
         <span class="inline-flex items-center justify-center rounded-lg bg-slate-800 group-hover:bg-white/20 size-8">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="size-5" fill="none" stroke="currentColor">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" 
+               class="size-5" fill="none" stroke="currentColor">
             <path d="M4 6h16M4 12h16M4 18h16" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
           </svg>
         </span>
+
+        <!-- Label -->
         <span class="flex-1 text-sm font-medium">{{ item.label }}</span>
-        <span *ngIf="item.badge" class="text-xs px-2 py-0.5 rounded-full bg-white/10">{{ item.badge }}</span>
+
+        <!-- Badge -->
+        <span *ngIf="item.badge" 
+              class="text-xs px-2 py-0.5 rounded-full bg-white/10">
+          {{ item.badge }}
+        </span>
       </a>
     </ng-container>
-
   </nav>
 
-  <!-- Help card -->
-  <!-- <div class="m-3 p-4 rounded-2xl bg-gradient-to-br from-fuchsia-500 to-pink-500 text-slate-900 shadow-lg">
-    <div class="font-semibold">Xin chào 👋</div>
-    <p class="text-sm/6 opacity-90">Chúc bạn một ngày rực rỡ với những bó hoa đẹp nhất.</p>
-    <button
-      class="mt-3 w-full rounded-xl bg-white/90 hover:bg-white text-slate-900 text-sm font-semibold py-2 transition">
-      Tạo đơn nhanh
-    </button>
-  </div> -->
   <!-- Logout -->
-<div class="m-3">
-  <button 
-    (click)="logout()" 
-    class="w-full flex items-center justify-center gap-2 rounded-xl 
-           bg-gradient-to-r from-pink-500 to-fuchsia-500 
-           hover:from-pink-600 hover:to-fuchsia-600
-           text-white font-semibold py-2 transition shadow-lg">
-    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1m0-9V5" />
-    </svg>
-    Đăng xuất
-  </button>
-</div>
-
+  <div class="m-3">
+    <button 
+      (click)="logout()" 
+      class="w-full flex items-center justify-center gap-2 rounded-xl 
+             bg-gradient-to-r from-pink-500 to-fuchsia-500 
+             hover:from-pink-600 hover:to-fuchsia-600
+             text-white font-semibold py-2 transition shadow-lg">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" 
+           viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+              d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1m0-9V5" />
+      </svg>
+      Đăng xuất
+    </button>
+  </div>
 </aside>

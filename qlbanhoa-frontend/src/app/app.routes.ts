@@ -17,11 +17,7 @@ export const routes: Routes = [
   },
 
   // 👉 Trang Users (quản lý người dùng)
-  {
-    path: 'users',
-    loadComponent: () =>
-      import('./admin/user/users.component').then(m => m.UsersComponent)
-  },
+
 
   { path: '**', redirectTo: 'login' }                    
 ];

@@ -28,29 +28,39 @@ public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final UserService userService;
 
-    @Bean
+ @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                // tắt csrf vì API stateless
-                .csrf(csrf -> csrf.disable())
-                // bật CORS
-                .cors(cors -> {
-                })
-                // không lưu session
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                // phân quyền cho request
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        .requestMatchers("/api/users/**", "/api/roles/**").hasRole("ADMIN")
-                        .requestMatchers("/api/permissions/**").hasRole("ADMIN")
-                        .requestMatchers("/uploads/**").permitAll()
-                        .anyRequest().authenticated())
+            // tắt csrf vì API stateless
+            .csrf(csrf -> csrf.disable())
+            // bật CORS
+            .cors(cors -> {})
+            // không lưu session
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            // phân quyền cho request
+            .authorizeHttpRequests(auth -> auth
+                // Auth APIs cho phép public
+                .requestMatchers("/api/auth/**").permitAll()
+                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
-                // cấu hình authentication
-                .authenticationProvider(authenticationProvider())
-                // thêm JWT filter
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                // ✅ Cho phép mọi user đăng nhập đều lấy profile
+                .requestMatchers("/api/users/me/profile").authenticated()
+
+                // ✅ Chỉ ADMIN mới được quản lý users & roles
+                .requestMatchers("/api/users/**", "/api/roles/**").hasRole("ADMIN")
+                .requestMatchers("/api/permissions/**").hasRole("ADMIN")
+
+                // Public file uploads
+                .requestMatchers("/uploads/**").permitAll()
+
+                // Tất cả request khác phải có token hợp lệ
+                .anyRequest().authenticated()
+            )
+
+            // cấu hình authentication
+            .authenticationProvider(authenticationProvider())
+            // thêm JWT filter
+            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
