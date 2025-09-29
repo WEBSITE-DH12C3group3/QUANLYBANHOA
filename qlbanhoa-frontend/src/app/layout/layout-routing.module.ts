@@ -27,6 +27,25 @@ const routes: Routes = [
                         .then(m => m.ProductFormComponent),
       data: { title: 'Edit Product' }
       },
+      { path: 'categories',
+      loadComponent: () =>
+      import('../features/admin/categories/components/category-list/category-list.component')
+      .then(m => m.CategoryListComponent),
+      data: { title: 'Categories' }
+      },
+      { path: 'categories/new',
+      loadComponent: () =>
+      import('../features/admin/categories/components/category-form/category-form.component')
+      .then(m => m.CategoryFormComponent),
+      data: { title: 'New Category' }
+      },
+      { path: 'categories/:id',
+      loadComponent: () =>
+      import('../features/admin/categories/components/category-form/category-form.component')
+      .then(m => m.CategoryFormComponent),
+      data: { title: 'Edit Category' }
+      },
+
 
       { path: 'orders', component: FeaturePlaceholderComponent, data: { title: 'Orders' } },
       { path: 'customers', component: FeaturePlaceholderComponent, data: { title: 'Customers' } },

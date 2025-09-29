@@ -23,6 +23,7 @@ export class SidebarComponent implements OnInit {
   nav: NavItem[] = [
     { label: 'Dashboard', path: '/admin/dashboard' }, // không cần quyền
     { label: 'Products', path: '/admin/products', permission: 'product.read' },
+    { label: 'Categories', path: '/admin/categories', permission: 'category.read' },
     { label: 'Orders', path: '/admin/orders', badge: '12', permission: 'order.read' },
     { label: 'Customers', path: '/admin/customers', permission: 'customer.read' },
     { label: 'Suppliers', path: '/admin/suppliers', permission: 'supplier.read' },

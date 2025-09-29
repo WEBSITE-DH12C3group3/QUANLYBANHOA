@@ -12,6 +12,7 @@ import java.math.BigDecimal;
 public interface ProductRepository extends JpaRepository<Product, Integer> {
     boolean existsBySku(String sku);
     boolean existsBySlug(String slug);
+    long countByCategoryId(Integer categoryId);
 
     @Query("SELECT p FROM Product p " +
            "WHERE (:q IS NULL OR LOWER(p.name) LIKE LOWER(CONCAT('%', :q, '%')) OR LOWER(p.sku) LIKE LOWER(CONCAT('%', :q, '%'))) " +
