@@ -1,6 +1,8 @@
 package com.banhoa.backend.permission;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,12 +13,25 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PermissionController {
 
+    private final PermissionService permissionService;
     private final PermissionRepository permissionRepository;
 
-    // ✅ Lấy tất cả permissions
+    // ✅ GET chung: lấy tất cả hoặc tìm kiếm + phân trang
     @GetMapping
-    public ResponseEntity<List<Permission>> getAllPermissions() {
-        return ResponseEntity.ok(permissionRepository.findAll());
+    public ResponseEntity<?> getPermissions(
+            @RequestParam(required = false) String q,
+            @RequestParam(required = false) Integer page,
+            @RequestParam(required = false) Integer size
+    ) {
+        // Nếu có phân trang → gọi search
+        if (page != null && size != null) {
+            Page<Permission> result = permissionService.search(q, PageRequest.of(page, size));
+            return ResponseEntity.ok(result);
+        }
+
+        // Nếu không có phân trang → trả full list
+        List<Permission> all = permissionRepository.findAll();
+        return ResponseEntity.ok(all);
     }
 
     // ✅ Lấy permission theo id

@@ -3,11 +3,12 @@ package com.banhoa.backend.role;
 import com.banhoa.backend.permission.Permission;
 import com.banhoa.backend.permission.PermissionRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.util.Map;
-import java.util.HashSet;
-import java.util.List;
+
+import java.util.*;
 
 @RestController
 @RequestMapping("/api/roles")
@@ -15,11 +16,20 @@ import java.util.List;
 public class RoleController {
 
     private final RoleRepository roleRepository;
+    private final RoleService roleService;
     private final PermissionRepository permissionRepository;
 
-    // ✅ Lấy tất cả roles
+    // ✅ GET chung: lấy tất cả hoặc search + phân trang
     @GetMapping
-    public ResponseEntity<List<Role>> getAllRoles() {
+    public ResponseEntity<?> getRoles(
+            @RequestParam(required = false) String q,
+            @RequestParam(required = false) Integer page,
+            @RequestParam(required = false) Integer size
+    ) {
+        if (page != null && size != null) {
+            Page<Role> result = roleService.search(q, PageRequest.of(page, size));
+            return ResponseEntity.ok(result);
+        }
         return ResponseEntity.ok(roleRepository.findAll());
     }
 
@@ -40,9 +50,9 @@ public class RoleController {
         Role role = new Role();
         role.setName(name);
 
-        if (permissionIds != null) {
+        if (permissionIds != null && !permissionIds.isEmpty()) {
             List<Permission> permissions = permissionRepository.findAllById(permissionIds);
-            role.setPermissions(new HashSet<>(permissions)); // ✅ ép sang Set
+            role.setPermissions(new HashSet<>(permissions)); // convert List -> Set
         }
 
         return ResponseEntity.ok(roleRepository.save(role));

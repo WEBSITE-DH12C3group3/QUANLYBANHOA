@@ -1,6 +1,8 @@
 package com.banhoa.backend.user;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -41,5 +43,10 @@ public class UserService implements UserDetailsService {
 
     public void deleteUser(Integer id) {
         userRepository.deleteById(id);
+    }
+
+    /* ========== Search + phân trang cho Angular ========== */
+    public Page<User> search(String q, Pageable pageable) {
+        return userRepository.search(q, pageable);
     }
 }

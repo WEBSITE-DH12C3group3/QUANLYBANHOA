@@ -25,28 +25,29 @@ export class PermissionsListComponent implements OnInit {
     this.loadPermissions();
   }
 
-  loadPermissions() {
-    let params = new HttpParams()
-      .set('page', this.page)
-      .set('size', this.pageSize);
+loadPermissions() {
+  let params = new HttpParams()
+    .set('page', this.page - 1) // ⚠️ backend page = 0-based
+    .set('size', this.pageSize);
 
-    if (this.search.keyword && this.search.keyword.trim() !== '') {
-      params = params.set('q', this.search.keyword.trim());
-    }
-
-    this.http.get<any>(this.apiUrl, { params }).subscribe({
-      next: (res) => {
-        if (res.content) {
-          this.permissions = res.content;
-          this.totalPages = res.totalPages;
-        } else {
-          this.permissions = res;
-          this.totalPages = 1;
-        }
-      },
-      error: (err) => console.error('Lỗi load permissions:', err)
-    });
+  if (this.search.keyword && this.search.keyword.trim() !== '') {
+    params = params.set('q', this.search.keyword.trim());
   }
+
+  this.http.get<any>(this.apiUrl, { params }).subscribe({
+    next: (res) => {
+      this.permissions = res.content;
+      this.totalPages = res.totalPages;
+    },
+    error: (err) => console.error('Lỗi load permissions:', err)
+  });
+}
+
+onSearch() {
+  this.page = 1; // reset về trang đầu
+  this.loadPermissions();
+}
+
 
   deletePermission(id: number) {
     if (confirm('Bạn có chắc muốn xóa permission này?')) {
